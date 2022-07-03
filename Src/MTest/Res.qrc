@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Res/591424f04b1f7e6445ed63286b46eebe.png</file>
+        <file>Res/yellow_default.svg</file>
+        <file>Res/invite_people_nor.svg</file>
+    </qresource>
+</RCC>

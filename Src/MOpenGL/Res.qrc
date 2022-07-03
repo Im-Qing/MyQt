@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/GLSL">
+        <file>Res/GLSL/fragment.glsl</file>
+        <file>Res/GLSL/vertex.glsl</file>
+    </qresource>
+    <qresource prefix="/Img">
+        <file>Res/Img/BG.png</file>
+        <file>Res/Img/onetwo.jpg</file>
+    </qresource>
+</RCC>
