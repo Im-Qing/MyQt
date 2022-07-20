@@ -74,7 +74,6 @@ compile_commands.json
 *.cd
 *.doc
 *.zip
-*.pri
 *.bat
 
 *.DS_Store
