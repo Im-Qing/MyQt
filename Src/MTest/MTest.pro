@@ -18,11 +18,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     MMainWindow.cpp \
-    MRotationImg.cpp
 
 HEADERS += \
     MMainWindow.h \
-    MRotationImg.h
 
 FORMS += \
     MMainWindow.ui

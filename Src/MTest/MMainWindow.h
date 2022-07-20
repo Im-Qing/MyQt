@@ -6,8 +6,6 @@
 
 #include "MOpenGL/MGLWidget.h"
 
-#include "MRotationImg.h"
-
 using namespace NS_MOpenGL;
 
 QT_BEGIN_NAMESPACE
@@ -27,6 +25,5 @@ private:
     Ui::MMainWindow *ui;
     MGLWidget* m_pMGLWidget = nullptr;
     QTimer* m_pTimer;
-    MRotationImg* m_pRotationImg;
 };
 #endif // MMAINWINDOW_H
