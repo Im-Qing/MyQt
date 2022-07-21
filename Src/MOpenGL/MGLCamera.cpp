@@ -9,11 +9,6 @@ MGLCamera::MGLCamera(QObject *glWidget) : QObject(glWidget)
     m_pGLWidget->installEventFilter(this);
 }
 
-void MGLCamera::look(float yaw, float pitch, float roll)
-{
-
-}
-
 QMatrix4x4 MGLCamera::getViewMat()
 {
     m_viewMat.setToIdentity();
@@ -60,18 +55,23 @@ bool MGLCamera::eventFilter(QObject *obj, QEvent *ev)
 
             emit sign_viewMatChanged(getViewMat());
         }break;
+        case QEvent::MouseButtonPress:
+        {
+            auto event = static_cast<QMouseEvent *>(ev);
+            float xpos = event->x();
+            float ypos = event->y();
+            m_lastX = xpos;
+            m_lastY = ypos;
+        }break;
+        case QEvent::MouseButtonRelease:
+        {
+
+        }break;
         case QEvent::MouseMove:
         {
             auto event = static_cast<QMouseEvent *>(ev);
             float xpos = event->x();
             float ypos = event->y();
-            if(m_isFirstMouseMove)
-            {
-                m_lastX = xpos;
-                m_lastY = ypos;
-                m_isFirstMouseMove = false;
-            }
-
             float xoffset = xpos - m_lastX;
             float yoffset = m_lastY - ypos;
             m_lastX = xpos;

@@ -21,6 +21,8 @@ public:
     ~MMainWindow();
 public slots:
     void slot_timeout();
+    void slot_test1(bool);
+    void slot_test2(bool);
 private:
     Ui::MMainWindow *ui;
     MGLWidget* m_pMGLWidget = nullptr;

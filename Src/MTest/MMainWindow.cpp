@@ -16,6 +16,9 @@ MMainWindow::MMainWindow(QWidget *parent)
     m_pTimer = new QTimer(this);
     //m_pTimer->start(50);
     connect(m_pTimer, &QTimer::timeout,this,&MMainWindow::slot_timeout);
+
+    connect(ui->actiontest1, &QAction::triggered, this, &MMainWindow::slot_test1);
+    connect(ui->actiontest2, &QAction::triggered, this, &MMainWindow::slot_test2);
 }
 
 MMainWindow::~MMainWindow()
@@ -24,6 +27,16 @@ MMainWindow::~MMainWindow()
 }
 
 void MMainWindow::slot_timeout()
+{
+
+}
+
+void MMainWindow::slot_test1(bool)
+{
+
+}
+
+void MMainWindow::slot_test2(bool)
 {
 
 }
