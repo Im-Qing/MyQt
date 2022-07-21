@@ -19,13 +19,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     MGLCamera.cpp \
     MGLWidget.cpp \
-    MOpenGL.cpp
+    MOpenGL.cpp \
+    MGLModel.cpp
 
 HEADERS += \
     MGLCamera.h \
     MGLWidget.h \
     MOpenGL_global.h \
-    MOpenGL.h
+    MOpenGL.h \
+    MGLModel.h \
+    MGLDefines.h
 
 RESOURCES += \
     Res.qrc

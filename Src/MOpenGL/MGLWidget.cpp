@@ -152,7 +152,6 @@ void MGLWidget::paintGL()
     m_shaderProgram.setUniformValue("view", m_pGLCamera->getViewMat());
     m_shaderProgram.setUniformValue("projection", m_pGLCamera->getProjectionMat());
 
-
     //glDrawArrays(GL_TRIANGLE_STRIP,0,4);
     //glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -175,21 +174,6 @@ void MGLWidget::paintGL()
 void MGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);  //这里是显示窗体，上面有截取，这里才有显示。不然窗口不会显示任何内容
-}
-
-void MGLWidget::keyPressEvent(QKeyEvent *event)
-{
-
-}
-
-void MGLWidget::wheelEvent(QWheelEvent *event)
-{
-
-}
-
-void MGLWidget::mouseMoveEvent(QMouseEvent *event)
-{
-
 }
 
 QMatrix4x4 MGLWidget::glmMat4ToQMat4(glm::mat4 mat4)

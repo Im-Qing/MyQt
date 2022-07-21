@@ -3,18 +3,12 @@
 #include "MOpenGL_global.h"
 
 #include <QOpenGLWidget>
-#include <QOpenGLExtraFunctions>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLBuffer>
-#include <QOpenGLTexture>
 #include <QDateTime>
 #include <QTimer>
-#include <QKeyEvent>
-#include <QWheelEvent>
 #include <QDebug>
 
 #include "MGLCamera.h"
+#include "MGLModel.h"
 
 namespace NS_MOpenGL
 {
@@ -31,11 +25,8 @@ protected:
     void initializeGL();
     void paintGL();
     void resizeGL(int w, int h);
-
-    void keyPressEvent(QKeyEvent *event);
-    void wheelEvent(QWheelEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
 private:
+    void drawBox();
     QMatrix4x4 glmMat4ToQMat4(glm::mat4 mat4);
 public slots:
     void slot_cameraProjectionChanged(QMatrix4x4 projectionMat);
