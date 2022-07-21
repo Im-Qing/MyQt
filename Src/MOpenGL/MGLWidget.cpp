@@ -76,14 +76,6 @@ MGLWidget::MGLWidget(QWidget *parent)
     model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 0.0f));
 
-    m_view.setToIdentity();
-    m_view.lookAt(QVector3D(0.0f, 0.0f, 3.0f),
-                       QVector3D(0.0f, 0.0f, 2.0f),
-                       QVector3D(0.0f, 1.0f, 0.0f));
-
-    m_projection.setToIdentity();
-    m_projection.perspective(45.0, width() * 1.0 / height(), 0.1f, 100.0f);
-
     m_pTimer = new QTimer(this);
 //    m_pTimer->start(1000);
     connect(m_pTimer, &QTimer::timeout, this, &MGLWidget::slot_timeout);
@@ -157,8 +149,8 @@ void MGLWidget::paintGL()
 
     m_shaderProgram.setUniformValue("transform", glmMat4ToQMat4(trans));
     m_shaderProgram.setUniformValue("model", glmMat4ToQMat4(model));
-    m_shaderProgram.setUniformValue("view", m_view);
-    m_shaderProgram.setUniformValue("projection", m_projection);
+    m_shaderProgram.setUniformValue("view", m_pGLCamera->getViewMat());
+    m_shaderProgram.setUniformValue("projection", m_pGLCamera->getProjectionMat());
 
 
     //glDrawArrays(GL_TRIANGLE_STRIP,0,4);
@@ -219,12 +211,10 @@ QMatrix4x4 MGLWidget::glmMat4ToQMat4(glm::mat4 mat4)
 
 void MGLWidget::slot_cameraProjectionChanged(QMatrix4x4 projectionMat)
 {
-    m_projection = projectionMat;
     repaint();
 }
 
 void MGLWidget::slot_cameraViewMatChanged(QMatrix4x4 viewMat)
 {
-    m_view = viewMat;
     repaint();
 }

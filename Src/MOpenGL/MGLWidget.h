@@ -48,8 +48,6 @@ private:
 
     glm::mat4 trans;
     glm::mat4 model;
-    QMatrix4x4 m_view;
-    QMatrix4x4 m_projection;
 
     QTimer* m_pTimer;
     MGLCamera* m_pGLCamera;
