@@ -1,4 +1,4 @@
-#include "MGLCamera.h"
+﻿#include "MGLCamera.h"
 
 using namespace NS_MOpenGL;
 
@@ -99,15 +99,16 @@ bool MGLCamera::eventFilter(QObject *obj, QEvent *ev)
         case QEvent::Wheel:
         {
             auto event = static_cast<QWheelEvent *>(ev);
-            float yoffset = 1.0;
+            float yoffset = 3.0;
             if(event->delta() > 0)      // 当滚轮远离使用者时进行放大
             {
-                m_fov -= yoffset;
+                yoffset *= -1;
             }
-            else                        // 当滚轮向使用者方向旋转时进行缩小
-            {
-                m_fov += yoffset;
-            }
+            m_fov += yoffset;
+            if(m_fov <= 1.0f)
+                m_fov = 1.0f;
+            if(m_fov >= 179.0f)
+                m_fov = 179.0f;
 
             emit sign_projectionMatChanged(getProjectionMat());
         }break;

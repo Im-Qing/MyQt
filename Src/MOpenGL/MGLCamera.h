@@ -1,4 +1,4 @@
-#ifndef MGLCAMERA_H
+﻿#ifndef MGLCAMERA_H
 #define MGLCAMERA_H
 
 #include <QWidget>
