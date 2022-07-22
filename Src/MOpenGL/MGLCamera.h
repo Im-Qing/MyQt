@@ -37,7 +37,7 @@ private:
     float m_fov = 45.0;
     QMatrix4x4 m_viewMat;
     QMatrix4x4 m_projectionMat;
-    QVector3D m_cameraPos{ 0,0,3 };
+    QVector3D m_cameraPos{ 0,0,6 };
     QVector3D m_cameraFront{ 0,0,-1 };
     QVector3D m_cameraUp{ 0,1,0 };
 

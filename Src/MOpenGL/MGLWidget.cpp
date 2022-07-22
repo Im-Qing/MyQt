@@ -97,16 +97,6 @@ void MGLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glClearColor(0, 0.5, 0.7, 1);
 
-    //    //点和颜色数据
-    //    float vertices[]={
-    //        //位置                 颜色                纹理坐标
-    //        -0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f,            // 左下角
-    //        -0.5f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 1.0f,            // 左上角
-    //        0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 1.0f,   1.0f, 0.0f,            // 右下角
-    //        0.5f,  0.5f, 0.0f,    1.0f, 0.0f, 0.0f,   1.0f, 1.0f            // 右上角
-    //    };
-
-
     m_vao.create();
     m_vbo.create();
     m_shaderProgram.create();
@@ -152,9 +142,42 @@ void MGLWidget::paintGL()
     m_shaderProgram.setUniformValue("view", m_pGLCamera->getViewMat());
     m_shaderProgram.setUniformValue("projection", m_pGLCamera->getProjectionMat());
 
-    //glDrawArrays(GL_TRIANGLE_STRIP,0,4);
-    //glDrawArrays(GL_TRIANGLES, 0, 36);
+    //物体
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+    float angle = -30.0f;
+    model = glm::rotate(model, glm::radians(angle), glm::vec3(-1.0f, 1.0f, 0.0f));
+    m_shaderProgram.setUniformValue("model", glmMat4ToQMat4(model));
+    drawBox(model);
+    //光源
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(5.0f, 2.0f, -3.5f));
+    angle = 0.0f;
+    model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+    model = glm::scale(model, glm::vec3(0.3, 0.3, 0.3));
+    m_shaderProgram.setUniformValue("model", glmMat4ToQMat4(model));
+    drawBox(model);
 
+//    draw10Box();
+
+    m_texture.release();
+    m_shaderProgram.release();
+    m_vao.release();
+}
+
+void MGLWidget::resizeGL(int w, int h)
+{
+    glViewport(0, 0, w, h);  //这里是显示窗体，上面有截取，这里才有显示。不然窗口不会显示任何内容
+}
+
+void MGLWidget::drawBox(glm::mat4 modelMat)
+{
+    m_shaderProgram.setUniformValue("model", glmMat4ToQMat4(modelMat));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void MGLWidget::draw10Box()
+{
     for(unsigned int i = 0; i < 10; i++)
     {
         glm::mat4 model = glm::mat4(1.0f); ;
@@ -165,15 +188,6 @@ void MGLWidget::paintGL()
 
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
-
-    m_texture.release();
-    m_shaderProgram.release();
-    m_vao.release();
-}
-
-void MGLWidget::resizeGL(int w, int h)
-{
-    glViewport(0, 0, w, h);  //这里是显示窗体，上面有截取，这里才有显示。不然窗口不会显示任何内容
 }
 
 QMatrix4x4 MGLWidget::glmMat4ToQMat4(glm::mat4 mat4)

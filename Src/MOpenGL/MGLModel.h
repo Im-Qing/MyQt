@@ -8,6 +8,11 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include "MGLDefines.h"
 
 namespace NS_MOpenGL
@@ -19,16 +24,20 @@ public:
     explicit MGLModel(QObject *parent = nullptr);
 public:
     void setVertices(const QVector<MGLVertex> &vertices);
+    void setVertices(float *vertices);
     void setTexture(const QString& imgSrc, int index);
     void setPos(const QVector3D& pos);
     void setScale(const QVector3D& scale);
     void setRotate(const QVector3D& rotate);
 public:
     void initialize();
-    void paint();
+    void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat);
 private:
-    QVector<MGLVertex> m_vertices;              //顶点
-    QMap<int, QOpenGLTexture> m_textures;       //纹理
+    QMatrix4x4 glmMat4ToQMat4(glm::mat4 mat4);
+private:
+    QVector<MGLVertex> m_vertices;               //顶点
+    QMap<int, QString> m_texturesImgsrc;         //纹理图片
+    QMap<int, QOpenGLTexture*> m_textures;       //纹理
     QVector3D m_pos;
     QVector3D m_scale;
     QVector3D m_rotate;
