@@ -3,6 +3,8 @@
 using namespace NS_MOpenGL;
 
 MGLModel::MGLModel(QObject *parent) : QObject(parent)
+  , m_texture(QOpenGLTexture::Target2D)
+  , m_texture1(QOpenGLTexture::Target2D)
 {
 
 }
@@ -52,9 +54,10 @@ void MGLModel::setVertices(const QVector<MGLVertex> &vertices)
     }
 }
 
-void MGLModel::setVertices(float *vertices)
+void MGLModel::setVertices(float *vertices, int nSize)
 {
     m_pVertexBuffer = vertices;
+    m_vertexBufferSize = nSize;
 }
 
 void MGLModel::setTexture(const QString& imgSrc, int index)
@@ -90,7 +93,7 @@ void MGLModel::initialize()
     m_shaderProgram.bind();
 
     //顶点数据
-    m_vbo.allocate(m_pVertexBuffer, sizeof(m_pVertexBuffer));
+    m_vbo.allocate(m_pVertexBuffer, m_vertexBufferSize);
 
     //着色器加载链接
     m_shaderProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/GLSL/Res/GLSL/vertex.glsl");
@@ -98,61 +101,65 @@ void MGLModel::initialize()
     m_shaderProgram.link();
 
     //着色器解析规则
-    m_shaderProgram.setAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 8 * sizeof(float));
+    m_shaderProgram.setAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 8*sizeof(float));
     m_shaderProgram.enableAttributeArray("vPos");
-    m_shaderProgram.setAttributeBuffer("vColor", GL_FLOAT, 3*sizeof(float), 3, 8 * sizeof(float));
-    m_shaderProgram.enableAttributeArray("vColor");
-    m_shaderProgram.setAttributeBuffer("vTexture", GL_FLOAT, 6*sizeof(float), 2, 8 * sizeof(float));
-    m_shaderProgram.enableAttributeArray("vTexture");
+    m_shaderProgram.setAttributeBuffer("vNormal", GL_FLOAT, 3*sizeof(float), 3, 8*sizeof(float));
+    m_shaderProgram.enableAttributeArray("vNormal");
+    m_shaderProgram.setAttributeBuffer("vTextureCoords", GL_FLOAT, 6*sizeof(float), 2, 8*sizeof(float));
+    m_shaderProgram.enableAttributeArray("vTextureCoords");
 
     //纹理
-    m_textures[0] = new QOpenGLTexture(QOpenGLTexture::Target2D);
-    m_textures[0]->create();
-    m_textures[0]->setData(QImage(m_texturesImgsrc[0]).mirrored());
-    m_shaderProgram.setUniformValue("uTexture", 0);
+    m_texture.create();
+    m_texture.setData(QImage(m_texturesImgsrc[0]).mirrored());
+    m_texture1.create();
+    m_texture1.setData(QImage(m_texturesImgsrc[1]).mirrored());
 
     m_shaderProgram.release();
     m_vbo.release();
     m_vao.release();
 }
 
-void MGLModel::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat)
+void MGLModel::paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos, bool isObject)
 {
     m_vao.bind();
     m_shaderProgram.bind();
-    m_textures[0]->bind(0);
 
-    glm::mat4 trans = glm::mat4(1.0f);      //单位矩阵
-    trans = glm::rotate(trans, glm::radians(0.0f), glm::vec3(0.0, 0.0, 1.0));
-    trans = glm::scale(trans, glm::vec3(1, 1, 1));
+    m_shaderProgram.setUniformValue("material.diffuse", 0);
+    m_shaderProgram.setUniformValue("material.specular", 1);
+    m_texture.bind(0);
+    m_texture1.bind(1);
 
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 1.0f, 0.0f));
-    m_shaderProgram.setUniformValue("transform", glmMat4ToQMat4(trans));
-    m_shaderProgram.setUniformValue("model", glmMat4ToQMat4(model));
+    m_shaderProgram.setUniformValue("model", modelMat);
     m_shaderProgram.setUniformValue("view", viewMat);
     m_shaderProgram.setUniformValue("projection", projectionMat);
 
+    m_shaderProgram.setUniformValue("isObject", isObject);
+    if(isObject)
+    {
+        glm::vec3 lightColor;
+        lightColor.x = sin(QTime::currentTime().second() * 2.0f);
+        lightColor.y = sin(QTime::currentTime().second() * 0.7f);
+        lightColor.z = sin(QTime::currentTime().second() * 1.3f);
+        m_shaderProgram.setUniformValue("light.color", lightColor.x, lightColor.y, lightColor.z);
+        m_shaderProgram.setUniformValue("light.color", 1.0f, 1.0f, 1.0f);
+    }
+    else
+        m_shaderProgram.setUniformValue("light.color", QVector3D(1.0f, 1.0f, 1.0f));
+
+    m_shaderProgram.setUniformValue("light.position", QVector3D(0.4f, -0.2f, 1.0f));
+
+    m_shaderProgram.setUniformValue("viewPos", cameraPos);
+
+    m_shaderProgram.setUniformValue("material.ambientStrength",  0.2f);
+    m_shaderProgram.setUniformValue("material.diffuseStrength",  1.0f);
+    m_shaderProgram.setUniformValue("material.specularStrength", 1.f);
+    m_shaderProgram.setUniformValue("material.shininess", 16.0f);
+
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
-    m_textures[0]->release();
+    m_texture1.release();
+    m_texture.release();
     m_shaderProgram.release();
     m_vao.release();
 }
 
-QMatrix4x4 MGLModel::glmMat4ToQMat4(glm::mat4 mat4)
-{
-    QMatrix4x4 matRes;
-
-    for(int c = 0; c < 4; c++)
-    {
-        QVector4D row;
-        row.setX(mat4[0][c]);
-        row.setY(mat4[1][c]);
-        row.setZ(mat4[2][c]);
-        row.setW(mat4[3][c]);
-        matRes.setRow(c, row);
-    }
-
-    return matRes;
-}

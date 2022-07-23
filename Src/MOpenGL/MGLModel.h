@@ -7,6 +7,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
+#include <QTime>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,20 +25,20 @@ public:
     explicit MGLModel(QObject *parent = nullptr);
 public:
     void setVertices(const QVector<MGLVertex> &vertices);
-    void setVertices(float *vertices);
+    void setVertices(float *vertices, int nSize);
     void setTexture(const QString& imgSrc, int index);
     void setPos(const QVector3D& pos);
     void setScale(const QVector3D& scale);
     void setRotate(const QVector3D& rotate);
 public:
     void initialize();
-    void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat);
-private:
-    QMatrix4x4 glmMat4ToQMat4(glm::mat4 mat4);
+    void paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos, bool isObject);
 private:
     QVector<MGLVertex> m_vertices;               //顶点
     QMap<int, QString> m_texturesImgsrc;         //纹理图片
     QMap<int, QOpenGLTexture*> m_textures;       //纹理
+    QOpenGLTexture m_texture;
+    QOpenGLTexture m_texture1;
     QVector3D m_pos;
     QVector3D m_scale;
     QVector3D m_rotate;
@@ -46,6 +47,7 @@ private:
     QOpenGLBuffer m_vbo;
     QOpenGLShaderProgram m_shaderProgram;
     float *m_pVertexBuffer = nullptr;
+    int m_vertexBufferSize;
     QVector3D m_vertexWeightLen = QVector3D(0, 0, 0);            //顶点各分量的float长度（位置，颜色，纹理），如果这三个顶点数据都有的话则值为(3, 3, 2)
     int m_vertexFloatCount;
 };

@@ -26,22 +26,16 @@ protected:
     void paintGL();
     void resizeGL(int w, int h);
 private:
-    void drawBox(glm::mat4 modelMat);
     void draw10Box();
     QMatrix4x4 glmMat4ToQMat4(glm::mat4 mat4);
 public slots:
     void slot_cameraProjectionChanged(QMatrix4x4 projectionMat);
     void slot_cameraViewMatChanged(QMatrix4x4 viewMat);
 private:
-    QOpenGLVertexArrayObject m_vao;
-    QOpenGLBuffer m_vbo;
-    QOpenGLShaderProgram m_shaderProgram;
-    QOpenGLTexture m_texture;
-
-    glm::mat4 trans;
-    glm::mat4 model;
-
     QTimer* m_pTimer;
     MGLCamera* m_pGLCamera;
+
+    MGLModel* m_pObject;
+    MGLModel* m_pLight;
 };
 }

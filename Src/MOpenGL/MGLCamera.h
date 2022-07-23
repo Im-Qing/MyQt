@@ -25,6 +25,7 @@ public:
 public:
     QMatrix4x4 getViewMat();
     QMatrix4x4 getProjectionMat();
+    QVector3D getCameraPos();
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
 signals:

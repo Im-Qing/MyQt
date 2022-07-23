@@ -6,5 +6,7 @@
     <qresource prefix="/Img">
         <file>Res/Img/BG.png</file>
         <file>Res/Img/onetwo.jpg</file>
+        <file>Res/Img/container2.png</file>
+        <file>Res/Img/container2_specular.png</file>
     </qresource>
 </RCC>

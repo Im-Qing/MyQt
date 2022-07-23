@@ -25,6 +25,11 @@ QMatrix4x4 MGLCamera::getProjectionMat()
     return m_projectionMat;
 }
 
+QVector3D MGLCamera::getCameraPos()
+{
+    return m_cameraPos;
+}
+
 bool MGLCamera::eventFilter(QObject *obj, QEvent *ev)
 {
     if(obj == parent())     //gl窗口事件
