@@ -2,19 +2,6 @@
 
 using namespace NS_MOpenGL;
 
-glm::vec3 cubePositions[] = {
-    glm::vec3( 0.0f,  0.0f,  0.0f),
-    glm::vec3( 2.0f,  5.0f, -15.0f),
-    glm::vec3(-1.5f, -2.2f, -2.5f),
-    glm::vec3(-3.8f, -2.0f, -12.3f),
-    glm::vec3( 2.4f, -0.4f, -3.5f),
-    glm::vec3(-1.7f,  3.0f, -7.5f),
-    glm::vec3( 1.3f, -2.0f, -2.5f),
-    glm::vec3( 1.5f,  2.0f, -2.5f),
-    glm::vec3( 1.5f,  0.2f, -1.5f),
-    glm::vec3(-1.3f,  1.0f, -1.5f)
-};
-
 float normalVertices[] = {
     // positions          // normals           // texture coords
     -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
@@ -114,7 +101,7 @@ void MGLWidget::paintGL()
     m_pObject->paint(glmMat4ToQMat4(model), m_pGLCamera->getViewMat(), m_pGLCamera->getProjectionMat(), m_pGLCamera->getCameraPos(), true);
 
     model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(8.0f, 0.0f, 2.0f));
+    model = glm::translate(model, glm::vec3(5.f, -0.2f, 1.0f));
     angle = 0.0f;
     model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
     model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
@@ -124,20 +111,6 @@ void MGLWidget::paintGL()
 void MGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);  //这里是显示窗体，上面有截取，这里才有显示。不然窗口不会显示任何内容
-}
-
-void MGLWidget::draw10Box()
-{
-    for(unsigned int i = 0; i < 10; i++)
-    {
-        glm::mat4 model = glm::mat4(1.0f); ;
-        model = glm::translate(model, cubePositions[i]);
-        float angle = 20.0f * i;
-        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        //m_shaderProgram.setUniformValue("model", glmMat4ToQMat4(model));
-
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
 }
 
 QMatrix4x4 MGLWidget::glmMat4ToQMat4(glm::mat4 mat4)

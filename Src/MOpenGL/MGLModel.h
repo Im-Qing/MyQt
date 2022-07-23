@@ -34,6 +34,8 @@ public:
     void initialize();
     void paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos, bool isObject);
 private:
+    QMatrix4x4 glmMat4ToQMat4(glm::mat4 mat4);
+private:
     QVector<MGLVertex> m_vertices;               //顶点
     QMap<int, QString> m_texturesImgsrc;         //纹理图片
     QMap<int, QOpenGLTexture*> m_textures;       //纹理

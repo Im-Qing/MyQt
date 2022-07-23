@@ -2,6 +2,19 @@
 
 using namespace NS_MOpenGL;
 
+glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f),
+    glm::vec3( 2.0f,  5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3( 2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f,  3.0f, -7.5f),
+    glm::vec3( 1.3f, -2.0f, -2.5f),
+    glm::vec3( 1.5f,  2.0f, -2.5f),
+    glm::vec3( 1.5f,  0.2f, -1.5f),
+    glm::vec3(-1.3f,  1.0f, -1.5f)
+};
+
 MGLModel::MGLModel(QObject *parent) : QObject(parent)
   , m_texture(QOpenGLTexture::Target2D)
   , m_texture1(QOpenGLTexture::Target2D)
@@ -142,11 +155,13 @@ void MGLModel::paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 project
         lightColor.z = sin(QTime::currentTime().second() * 1.3f);
         m_shaderProgram.setUniformValue("light.color", lightColor.x, lightColor.y, lightColor.z);
         m_shaderProgram.setUniformValue("light.color", 1.0f, 1.0f, 1.0f);
+        m_shaderProgram.setUniformValue("light.cutOff", glm::cos(glm::radians(12.5f)));
     }
     else
         m_shaderProgram.setUniformValue("light.color", QVector3D(1.0f, 1.0f, 1.0f));
 
-    m_shaderProgram.setUniformValue("light.position", QVector3D(0.4f, -0.2f, 1.0f));
+    m_shaderProgram.setUniformValue("light.position", cameraPos);
+    m_shaderProgram.setUniformValue("light.direction", QVector3D(-0.0f, -0.0f, -1.f));
 
     m_shaderProgram.setUniformValue("viewPos", cameraPos);
 
@@ -155,11 +170,46 @@ void MGLModel::paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 project
     m_shaderProgram.setUniformValue("material.specularStrength", 1.f);
     m_shaderProgram.setUniformValue("material.shininess", 16.0f);
 
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    if(isObject)
+    {
+        for(unsigned int i = 0; i < 10; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f); ;
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            m_shaderProgram.setUniformValue("model", glmMat4ToQMat4(model));
+
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+    }
+    else
+    {
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+
 
     m_texture1.release();
     m_texture.release();
     m_shaderProgram.release();
     m_vao.release();
 }
+
+QMatrix4x4 MGLModel::glmMat4ToQMat4(glm::mat4 mat4)
+{
+    QMatrix4x4 matRes;
+
+    for(int c = 0; c < 4; c++)
+    {
+        QVector4D row;
+        row.setX(mat4[0][c]);
+        row.setY(mat4[1][c]);
+        row.setZ(mat4[2][c]);
+        row.setW(mat4[3][c]);
+        matRes.setRow(c, row);
+    }
+
+    return matRes;
+}
+
 

@@ -26,7 +26,6 @@ protected:
     void paintGL();
     void resizeGL(int w, int h);
 private:
-    void draw10Box();
     QMatrix4x4 glmMat4ToQMat4(glm::mat4 mat4);
 public slots:
     void slot_cameraProjectionChanged(QMatrix4x4 projectionMat);
