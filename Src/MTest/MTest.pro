@@ -1,4 +1,4 @@
-QT       += core gui positioning location
+QT       += core gui positioning location opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -27,7 +27,8 @@ FORMS += \
 
 INCLUDEPATH += \
     $$PWD/../../Thirdpart \
-    $$PWD/../../Src
+    $$PWD/../../Src \
+    $$PWD/../../Thirdpart/OpenSceneGraph-3.6.4/include
 
 RESOURCES += \
     Res.qrc
@@ -39,7 +40,8 @@ DEPENDPATH += \
 
 win32{
     LIBS += \
-        -L$$PWD/../../Lib/Win -lMOpenGLd -lMCored -lMWidgetd
+        -L$$PWD/../../Lib/Win \
+            -lMOpenGLd -lMCored -lMWidgetd  -lMOsgd
 
     DESTDIR = $$PWD/../../Bin/Win
 }
@@ -48,13 +50,15 @@ mac{
         LIBS += \
             -L$$PWD/../../Temp/Src/MOpenGL -lMOpenGLd \
             -L$$PWD/../../Temp/Src/MWidget -lMWidgetd \
-            -L$$PWD/../../Temp/Src/MCore -lMCored
+            -L$$PWD/../../Temp/Src/MCore -lMCored \
+            -L$$PWD/../../Temp/Src/MOsg -lMOsgd
     }
     CONFIG(release,debug|release){
         LIBS += \
             -L$$PWD/../../Temp/Src/MOpenGL -lMOpenGL \
             -L$$PWD/../../Temp/Src/MWidget -lMWidget \
-            -L$$PWD/../../Temp/Src/MCore -lMCore
+            -L$$PWD/../../Temp/Src/MCore -lMCore \
+            -L$$PWD/../../Temp/Src/MOsg -lMOsg
     }
 
     DESTDIR = $$PWD/../../Bin/Mac

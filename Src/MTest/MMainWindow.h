@@ -5,6 +5,7 @@
 #include <QTimer>
 
 #include "MOpenGL/MGLWidget.h"
+#include "MOsg/MOsgWidget.h"
 
 using namespace NS_MOpenGL;
 
@@ -25,7 +26,9 @@ public slots:
     void slot_test2(bool);
 private:
     Ui::MMainWindow *ui;
-    MGLWidget* m_pMGLWidget = nullptr;
     QTimer* m_pTimer;
+
+    MGLWidget* m_pMGLWidget = nullptr;
+    MOsgWidget* m_pMOsgWidget = nullptr;
 };
 #endif // MMAINWINDOW_H

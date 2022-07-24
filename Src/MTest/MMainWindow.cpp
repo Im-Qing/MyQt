@@ -10,12 +10,16 @@ MMainWindow::MMainWindow(QWidget *parent)
     ui->setupUi(this);
     resize(1000, 600);
 
-    m_pMGLWidget = new MGLWidget(this);
-    ui->gridLayout->addWidget(m_pMGLWidget);
-
     m_pTimer = new QTimer(this);
     //m_pTimer->start(50);
     connect(m_pTimer, &QTimer::timeout,this,&MMainWindow::slot_timeout);
+
+    m_pMGLWidget = new MGLWidget(this);
+    //ui->gridLayout->addWidget(m_pMGLWidget);
+
+    m_pMOsgWidget = new MOsgWidget(this);
+    m_pMOsgWidget->setModel("D:/Code/OpenSceneGraph-Data-3.0.0/cow.osgt");
+    ui->gridLayout->addWidget(m_pMOsgWidget);
 
     connect(ui->actiontest1, &QAction::triggered, this, &MMainWindow::slot_test1);
     connect(ui->actiontest2, &QAction::triggered, this, &MMainWindow::slot_test2);
