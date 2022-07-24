@@ -5,9 +5,11 @@
 #include <QTimer>
 
 #include "MOpenGL/MGLWidget.h"
+#include "MOsg/MOsgScene.h"
 #include "MOsg/MOsgWidget.h"
 
 using namespace NS_MOpenGL;
+using namespace NS_MOsg;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MMainWindow; }
@@ -29,6 +31,8 @@ private:
     QTimer* m_pTimer;
 
     MGLWidget* m_pMGLWidget = nullptr;
+
+    MOsgScene* m_pMOsgScene = nullptr;
     MOsgWidget* m_pMOsgWidget = nullptr;
 };
 #endif // MMAINWINDOW_H

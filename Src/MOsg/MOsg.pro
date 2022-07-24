@@ -18,9 +18,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     MOsg.cpp \
+    MOsgScene.cpp \
     MOsgWidget.cpp
 
 HEADERS += \
+    MOsgScene.h \
     MOsgWidget.h \
     MOsg_global.h \
     MOsg.h

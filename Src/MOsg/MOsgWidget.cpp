@@ -1,6 +1,8 @@
 #include "MOsgWidget.h"
 
-MOsgWidget::MOsgWidget(QWidget *parent) : QGraphicsView(parent)
+using namespace NS_MOsg;
+
+MOsgWidget::MOsgWidget(MOsgScene* pScene, QWidget *parent) : QGraphicsView(parent)
 {
     m_pScene = new QGraphicsScene;
     setScene(m_pScene);
@@ -22,31 +24,10 @@ MOsgWidget::MOsgWidget(QWidget *parent) : QGraphicsView(parent)
     m_pViewer->getCamera()->setClearColor(osg::Vec4(141.0 / 255, 144.0 / 255, 143.0 / 255, 1));
     m_pGraphicsWindow = m_pViewer->setUpViewerAsEmbeddedInWindow(0, 0, width(), height());
 
-    m_pRoot = new osg::Group;
-    m_pRoot->setName("root");
-
-    //3D模型
-    m_pModelNode = new osg::Group;
-    m_pModelNode->setName("modelNode");
-    m_pRoot->addChild(m_pModelNode);
-
-    m_pViewer->setSceneData(m_pRoot.get());
+    m_pViewer->setSceneData(pScene);
     m_pViewer->realize();
 
     startTimer(16);
-}
-
-void MOsgWidget::setModel(QString filePath)
-{
-    m_pModelNode->removeChildren(0, m_pModelNode->getNumChildren());
-    osg::ref_ptr<osg::Node> model = osgDB::readNodeFile(filePath.toStdString());
-    //osg::ref_ptr<osg::Node> model = osgDB::readNodeFile("F:/A-10.ive");
-//    osg::ref_ptr<osg::MatrixTransform> trans = new osg::MatrixTransform();
-//    trans->setMatrix(osg::Matrix::scale(0.2, 0.2, 0.2));
-//    trans->addChild(model.get());
-    m_pModelNode->addChild(model.get());
-
-    m_pViewer->getCameraManipulator()->home(0.0);
 }
 
 bool MOsgWidget::viewportEvent(QEvent* event)
@@ -298,20 +279,24 @@ void MOsgWidget::timerEvent(QTimerEvent *event)
 
 void MOsgWidget::drawBackground(QPainter *painter, const QRectF& rect)
 {
-    if (painter->paintEngine()->type() != QPaintEngine::OpenGL2)
-    {
-        return;
-    }
+//    if (painter->paintEngine()->type() != QPaintEngine::OpenGL2)
+//    {
+//        return;
+//    }
 
-    // Save the painter state
-    painter->save();
+//    // Save the painter state
+//    painter->save();
+//    painter->beginNativePainting();
+
+//    // OSG帧更新
+//    m_pViewer->frame();
+
+//    painter->endNativePainting();
+//    painter->restore();
+
     painter->beginNativePainting();
-
-    // OSG帧更新
     m_pViewer->frame();
-
     painter->endNativePainting();
-    painter->restore();
 }
 
 void MOsgWidget::drawForeground(QPainter *painter, const QRectF &rect)

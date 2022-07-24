@@ -41,7 +41,9 @@ DEPENDPATH += \
 win32{
     LIBS += \
         -L$$PWD/../../Lib/Win \
-            -lMOpenGLd -lMCored -lMWidgetd  -lMOsgd
+            -lMOpenGLd -lMCored -lMWidgetd  -lMOsgd \
+        -L$$PWD/../../3rdPart/OpenSceneGraph-3.6.4/lib \
+            -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd
 
     DESTDIR = $$PWD/../../Bin/Win
 }

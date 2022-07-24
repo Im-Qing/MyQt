@@ -13,23 +13,23 @@
 #include <QOpenGLWidget>
 #include <QDebug>
 
-#include <osgViewer/GraphicsWindow>
-#include <osgGA/TrackballManipulator>
-#include <osgViewer/ViewerEventHandlers>
-#include <osgGA/StateSetManipulator>
-#include <osgDB/ReadFile>
 #include <osg/Notify>
-#include <osgGA/GUIEventHandler>
-#include <osgGA/StateSetManipulator>
-#include <osgViewer/Viewer>
+#include <osgViewer/GraphicsWindow>
 #include <osgViewer/ViewerEventHandlers>
+#include <osgViewer/Viewer>
+#include <osgGA/TrackballManipulator>
+#include <osgGA/StateSetManipulator>
+#include <osgGA/GUIEventHandler>
+#include <osgDB/ReadFile>
 
+#include "MOsgScene.h"
+
+namespace NS_MOsg
+{
 class MOSG_EXPORT MOsgWidget : public QGraphicsView
 {
 public:
-    MOsgWidget(QWidget *parent = nullptr);
-public:
-    void setModel(QString filePath);
+    MOsgWidget(MOsgScene* pScene, QWidget *parent = nullptr);
 protected:
     bool viewportEvent(QEvent* event);
     void setKeyboardModifiers(QInputEvent* event);
@@ -52,8 +52,7 @@ private:
 
     osg::ref_ptr<osgViewer::GraphicsWindow> m_pGraphicsWindow;
     osg::ref_ptr<osgViewer::Viewer> m_pViewer;
-    osg::ref_ptr<osg::Group> m_pRoot;
-    osg::ref_ptr<osg::Group> m_pModelNode;
 };
+}
 
 #endif // MOSGWIDGET_H
