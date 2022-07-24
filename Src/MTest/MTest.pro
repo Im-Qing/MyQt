@@ -26,9 +26,9 @@ FORMS += \
     MMainWindow.ui
 
 INCLUDEPATH += \
-    $$PWD/../../Thirdpart \
+    $$PWD/../../3rdPart \
     $$PWD/../../Src \
-    $$PWD/../../Thirdpart/OpenSceneGraph-3.6.4/include
+    $$PWD/../../3rdPart/OpenSceneGraph-3.6.4/include
 
 RESOURCES += \
     Res.qrc

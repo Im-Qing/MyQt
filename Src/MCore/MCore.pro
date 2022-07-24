@@ -26,7 +26,7 @@ SOURCES += \
     MString.cpp
 
 HEADERS += \
-        mcore_global.h \ 
+    mcore_global.h \
     MString.h
 
 win32{

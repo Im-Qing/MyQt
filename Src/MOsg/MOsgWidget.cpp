@@ -2,52 +2,51 @@
 
 MOsgWidget::MOsgWidget(QWidget *parent) : QGraphicsView(parent)
 {
-    m_bGrab = false;
-
     m_pScene = new QGraphicsScene;
     setScene(m_pScene);
 
     QSurfaceFormat format;
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
-    QOpenGLWidget* glViewPort = new QOpenGLWidget(this);
-    glViewPort->setFormat(format);
-    glViewPort->setMouseTracking(true);
-    glViewPort->setMaximumSize(2000, 2000);
-    this->setViewport(glViewPort);
-    this->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-    startTimer(16);
+    m_pGlViewPort = new QOpenGLWidget(this);
+    m_pGlViewPort->setFormat(format);
+    m_pGlViewPort->setMouseTracking(true);
+    m_pGlViewPort->setMaximumSize(10000, 10000);
+    setViewport(m_pGlViewPort);
+    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
 
-    this->viewer = new osgViewer::Viewer;
-    this->viewer->setCameraManipulator(new osgGA::TrackballManipulator);
-    this->viewer->addEventHandler(new osgViewer::StatsHandler);
-    this->viewer->getCamera()->setNearFarRatio(0.0001);
-    this->viewer->getCamera()->setComputeNearFarMode(osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
-    this->viewer->getCamera()->setClearColor(osg::Vec4(141.0 / 255, 144.0 / 255, 143.0 / 255, 1));
-    this->m_pGraphicsWindow = this->viewer->setUpViewerAsEmbeddedInWindow(0, 0, width(), height());
+    m_pViewer = new osgViewer::Viewer;
+    m_pViewer->setCameraManipulator(new osgGA::TrackballManipulator);
+    m_pViewer->addEventHandler(new osgViewer::StatsHandler);
+    m_pViewer->getCamera()->setNearFarRatio(0.0001);
+    m_pViewer->getCamera()->setComputeNearFarMode(osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
+    m_pViewer->getCamera()->setClearColor(osg::Vec4(141.0 / 255, 144.0 / 255, 143.0 / 255, 1));
+    m_pGraphicsWindow = m_pViewer->setUpViewerAsEmbeddedInWindow(0, 0, width(), height());
 
-    this->root = new osg::Group;
-    this->root->setName("root");
+    m_pRoot = new osg::Group;
+    m_pRoot->setName("root");
 
     //3D模型
-    this->modelNode = new osg::Group;
-    this->modelNode->setName("modelNode");
-    this->root->addChild(this->modelNode);
+    m_pModelNode = new osg::Group;
+    m_pModelNode->setName("modelNode");
+    m_pRoot->addChild(m_pModelNode);
 
-    this->viewer->setSceneData(this->root.get());
-    this->viewer->realize();
+    m_pViewer->setSceneData(m_pRoot.get());
+    m_pViewer->realize();
+
+    startTimer(16);
 }
 
 void MOsgWidget::setModel(QString filePath)
 {
-    this->modelNode->removeChildren(0, this->modelNode->getNumChildren());
+    m_pModelNode->removeChildren(0, m_pModelNode->getNumChildren());
     osg::ref_ptr<osg::Node> model = osgDB::readNodeFile(filePath.toStdString());
     //osg::ref_ptr<osg::Node> model = osgDB::readNodeFile("F:/A-10.ive");
 //    osg::ref_ptr<osg::MatrixTransform> trans = new osg::MatrixTransform();
 //    trans->setMatrix(osg::Matrix::scale(0.2, 0.2, 0.2));
 //    trans->addChild(model.get());
-    this->modelNode->addChild(model.get());
+    m_pModelNode->addChild(model.get());
 
-    viewer->getCameraManipulator()->home(0.0);
+    m_pViewer->getCameraManipulator()->home(0.0);
 }
 
 bool MOsgWidget::viewportEvent(QEvent* event)
@@ -159,11 +158,11 @@ void MOsgWidget::keyPressEvent(QKeyEvent* event)
 
     if(event->key() == Qt::Key_S)
     {
-        m_bGrab = true;
+
     }
     else
     {
-        m_bGrab = false;
+
     }
     QGraphicsView::keyPressEvent(event);
 }
@@ -253,7 +252,7 @@ void MOsgWidget::wheelEvent(QWheelEvent* event)
     setKeyboardModifiers(event);
     m_pGraphicsWindow->getEventQueue()->mouseScroll(
         event->orientation() == Qt::Vertical ?
-        (event->delta() > 0 ? osgGA::GUIEventAdapter::SCROLL_UP : osgGA::GUIEventAdapter::SCROLL_DOWN) :
+        (event->delta() > 0 ? osgGA::GUIEventAdapter::SCROLL_DOWN : osgGA::GUIEventAdapter::SCROLL_UP) :
         (event->delta() > 0 ? osgGA::GUIEventAdapter::SCROLL_LEFT : osgGA::GUIEventAdapter::SCROLL_RIGHT));
     QGraphicsView::wheelEvent(event);
 }
@@ -294,7 +293,7 @@ void MOsgWidget::moveEvent(QMoveEvent* event)
 
 void MOsgWidget::timerEvent(QTimerEvent *event)
 {
-    this->scene()->update();
+    scene()->update();
 }
 
 void MOsgWidget::drawBackground(QPainter *painter, const QRectF& rect)
@@ -309,7 +308,7 @@ void MOsgWidget::drawBackground(QPainter *painter, const QRectF& rect)
     painter->beginNativePainting();
 
     // OSG帧更新
-    viewer->frame();
+    m_pViewer->frame();
 
     painter->endNativePainting();
     painter->restore();

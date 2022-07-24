@@ -14,7 +14,7 @@ MMainWindow::MMainWindow(QWidget *parent)
     //m_pTimer->start(50);
     connect(m_pTimer, &QTimer::timeout,this,&MMainWindow::slot_timeout);
 
-    m_pMGLWidget = new MGLWidget(this);
+    //m_pMGLWidget = new MGLWidget(this);
     //ui->gridLayout->addWidget(m_pMGLWidget);
 
     m_pMOsgWidget = new MOsgWidget(this);

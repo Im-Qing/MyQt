@@ -26,11 +26,11 @@ HEADERS += \
     MOsg.h
 
 INCLUDEPATH += \
-    $$PWD/../../Thirdpart/OpenSceneGraph-3.6.4/include
+    $$PWD/../../3rdPart/OpenSceneGraph-3.6.4/include
 
 win32{
     LIBS += \
-        -L$$PWD/../../Thirdpart/OpenSceneGraph-3.6.4/lib \
+        -L$$PWD/../../3rdPart/OpenSceneGraph-3.6.4/lib \
             -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd
 
     TargetDir = /

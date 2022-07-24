@@ -34,7 +34,7 @@ RESOURCES += \
     Res.qrc
 
 INCLUDEPATH += \
-    $$PWD/../../Thirdpart
+    $$PWD/../../3rdPart
 
 win32{
     TargetDir = /

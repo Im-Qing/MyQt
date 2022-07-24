@@ -47,13 +47,13 @@ protected:
     virtual void drawForeground(QPainter *painter, const QRectF& rect);
     virtual void drawBackground(QPainter *painter, const QRectF& rect);
 private:
-    osgViewer::GraphicsWindow* m_pGraphicsWindow;
-    bool m_bGrab;
-
     QGraphicsScene *m_pScene;
-    osgViewer::Viewer *viewer;
-    osg::ref_ptr<osg::Group> root;
-    osg::ref_ptr<osg::Group> modelNode;
+    QOpenGLWidget* m_pGlViewPort;
+
+    osg::ref_ptr<osgViewer::GraphicsWindow> m_pGraphicsWindow;
+    osg::ref_ptr<osgViewer::Viewer> m_pViewer;
+    osg::ref_ptr<osg::Group> m_pRoot;
+    osg::ref_ptr<osg::Group> m_pModelNode;
 };
 
 #endif // MOSGWIDGET_H
