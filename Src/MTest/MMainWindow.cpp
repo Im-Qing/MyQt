@@ -18,7 +18,7 @@ MMainWindow::MMainWindow(QWidget *parent)
     //ui->gridLayout->addWidget(m_pMGLWidget);
 
     m_pMOsgScene = new MOsgScene(this);
-    //m_pMOsgScene->addNode("D:/Code/OpenSceneGraph-Data-3.0.0/cow.osgt");
+    m_pMOsgScene->addNode("../../Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
 
     m_pMOsgWidget = new MOsgWidget(m_pMOsgScene, this);
     ui->gridLayout->addWidget(m_pMOsgWidget);
@@ -39,7 +39,7 @@ void MMainWindow::slot_timeout()
 
 void MMainWindow::slot_test1(bool)
 {
-    m_pMOsgScene->addNode("D:/Code/OpenSceneGraph-Data-3.0.0/cow.osgt");
+    //m_pMOsgScene->addNode("D:/Code/OpenSceneGraph-Data-3.0.0/cow.osgt");
 }
 
 void MMainWindow::slot_test2(bool)
