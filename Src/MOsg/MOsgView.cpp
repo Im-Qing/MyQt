@@ -1,27 +1,37 @@
-#include "MOsgWidget.h"
+#include "MOsgView.h"
 
 using namespace NS_MOsg;
 
-MOsgWidget::MOsgWidget(MOsgScene* pScene, QWidget *parent) : QGraphicsView(parent)
+MOsgView::MOsgView(MOsgScene* pScene, QWidget *parent) : QGraphicsView(parent)
+  ,m_pScene(new QGraphicsScene)
 {
-    m_pScene = new QGraphicsScene;
     setScene(m_pScene);
 
-    QSurfaceFormat format;
-    format.setProfile(QSurfaceFormat::CompatibilityProfile);
-    m_pGlViewPort = new QOpenGLWidget(this);
-    m_pGlViewPort->setFormat(format);
+    //    QSurfaceFormat format;
+    //    format.setProfile(QSurfaceFormat::CompatibilityProfile);
+    //    m_pGlViewPort = new QOpenGLWidget(this);
+    //    m_pGlViewPort->setFormat(format);
+    //    m_pGlViewPort->setMouseTracking(true);
+    //    m_pGlViewPort->setMaximumSize(10000, 10000);
+    //    setViewport(m_pGlViewPort);
+    //    setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
+    QGLFormat format;
+    format.setProfile(QGLFormat::CompatibilityProfile);
+    m_pGlViewPort = new QGLWidget(format, this);
     m_pGlViewPort->setMouseTracking(true);
     m_pGlViewPort->setMaximumSize(10000, 10000);
     setViewport(m_pGlViewPort);
     setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
+
 
     m_pViewer = new osgViewer::Viewer;
     m_pViewer->setCameraManipulator(new osgGA::TrackballManipulator);
     m_pViewer->addEventHandler(new osgViewer::StatsHandler);
     m_pViewer->getCamera()->setNearFarRatio(0.0001);
     m_pViewer->getCamera()->setComputeNearFarMode(osg::CullSettings::COMPUTE_NEAR_FAR_USING_PRIMITIVES);
-    m_pViewer->getCamera()->setClearColor(osg::Vec4(141.0 / 255, 144.0 / 255, 143.0 / 255, 1));
+    m_pViewer->getCamera()->setClearColor(osg::Vec4(51.0 / 255, 51.0 / 255, 102.0 / 255, 1));
+
     m_pGraphicsWindow = m_pViewer->setUpViewerAsEmbeddedInWindow(0, 0, width(), height());
 
     m_pViewer->setSceneData(pScene);
@@ -30,7 +40,7 @@ MOsgWidget::MOsgWidget(MOsgScene* pScene, QWidget *parent) : QGraphicsView(paren
     startTimer(16);
 }
 
-bool MOsgWidget::viewportEvent(QEvent* event)
+bool MOsgView::viewportEvent(QEvent* event)
 {
     switch (event->type())
     {
@@ -115,7 +125,7 @@ bool MOsgWidget::viewportEvent(QEvent* event)
     return true;
 }
 
-void MOsgWidget::setKeyboardModifiers(QInputEvent* event)
+void MOsgView::setKeyboardModifiers(QInputEvent* event)
 {
     int modkey = event->modifiers() & (Qt::ShiftModifier | Qt::ControlModifier | Qt::AltModifier);
     unsigned int mask = 0;
@@ -126,7 +136,7 @@ void MOsgWidget::setKeyboardModifiers(QInputEvent* event)
     m_pGraphicsWindow->getEventQueue()->getCurrentEventState()->setModKeyMask(mask);
 }
 
-void MOsgWidget::keyPressEvent(QKeyEvent* event)
+void MOsgView::keyPressEvent(QKeyEvent* event)
 {
     QPoint pos = QCursor::pos();
     QList<QGraphicsItem*> listItems = items(mapToScene(pos.x(), pos.y()).toPoint());
@@ -134,7 +144,7 @@ void MOsgWidget::keyPressEvent(QKeyEvent* event)
     {
         setKeyboardModifiers(event);
         m_pGraphicsWindow->getEventQueue()->keyPress(
-            (osgGA::GUIEventAdapter::KeySymbol)*(event->text().toLatin1().data()));
+                    (osgGA::GUIEventAdapter::KeySymbol)*(event->text().toLatin1().data()));
     }
 
     if(event->key() == Qt::Key_S)
@@ -148,16 +158,16 @@ void MOsgWidget::keyPressEvent(QKeyEvent* event)
     QGraphicsView::keyPressEvent(event);
 }
 
-void MOsgWidget::keyReleaseEvent(QKeyEvent* event)
+void MOsgView::keyReleaseEvent(QKeyEvent* event)
 {
     setKeyboardModifiers(event);
     m_pGraphicsWindow->getEventQueue()->keyRelease(
-        (osgGA::GUIEventAdapter::KeySymbol)*(event->text().toLatin1().data()));
+                (osgGA::GUIEventAdapter::KeySymbol)*(event->text().toLatin1().data()));
 
     QGraphicsView::keyReleaseEvent(event);
 }
 
-void MOsgWidget::mousePressEvent(QMouseEvent* event)
+void MOsgView::mousePressEvent(QMouseEvent* event)
 {
     QPoint pos = event->pos();
     QList<QGraphicsItem*> listItems = items(mapToScene(pos.x(), pos.y()).toPoint());
@@ -181,7 +191,7 @@ void MOsgWidget::mousePressEvent(QMouseEvent* event)
     }
 }
 
-void MOsgWidget::mouseReleaseEvent(QMouseEvent* event)
+void MOsgView::mouseReleaseEvent(QMouseEvent* event)
 {
     int button = 0;
     switch (event->button())
@@ -198,7 +208,7 @@ void MOsgWidget::mouseReleaseEvent(QMouseEvent* event)
     QGraphicsView::mouseReleaseEvent(event);
 }
 
-void MOsgWidget::mouseDoubleClickEvent(QMouseEvent* event)
+void MOsgView::mouseDoubleClickEvent(QMouseEvent* event)
 {
     QPoint pos = QCursor::pos();
     QList<QGraphicsItem*> listItems = items(mapToScene(pos.x(), pos.y()).toPoint());
@@ -221,24 +231,24 @@ void MOsgWidget::mouseDoubleClickEvent(QMouseEvent* event)
     QGraphicsView::mouseDoubleClickEvent(event);
 }
 
-void MOsgWidget::mouseMoveEvent(QMouseEvent* event)
+void MOsgView::mouseMoveEvent(QMouseEvent* event)
 {
     setKeyboardModifiers(event);
     m_pGraphicsWindow->getEventQueue()->mouseMotion(event->x(), event->y());
     QGraphicsView::mouseMoveEvent(event);
 }
 
-void MOsgWidget::wheelEvent(QWheelEvent* event)
+void MOsgView::wheelEvent(QWheelEvent* event)
 {
     setKeyboardModifiers(event);
     m_pGraphicsWindow->getEventQueue()->mouseScroll(
-        event->orientation() == Qt::Vertical ?
-        (event->delta() > 0 ? osgGA::GUIEventAdapter::SCROLL_DOWN : osgGA::GUIEventAdapter::SCROLL_UP) :
-        (event->delta() > 0 ? osgGA::GUIEventAdapter::SCROLL_LEFT : osgGA::GUIEventAdapter::SCROLL_RIGHT));
+                event->orientation() == Qt::Vertical ?
+                    (event->delta() > 0 ? osgGA::GUIEventAdapter::SCROLL_DOWN : osgGA::GUIEventAdapter::SCROLL_UP) :
+                    (event->delta() > 0 ? osgGA::GUIEventAdapter::SCROLL_LEFT : osgGA::GUIEventAdapter::SCROLL_RIGHT));
     QGraphicsView::wheelEvent(event);
 }
 
-void MOsgWidget::resizeEvent(QResizeEvent *event)
+void MOsgView::resizeEvent(QResizeEvent *event)
 {
     if (scene())
     {
@@ -263,7 +273,7 @@ void MOsgWidget::resizeEvent(QResizeEvent *event)
     QGraphicsView::resizeEvent(event);
 }
 
-void MOsgWidget::moveEvent(QMoveEvent* event)
+void MOsgView::moveEvent(QMoveEvent* event)
 {
     const QPoint& pos = event->pos();
     m_pGraphicsWindow->resized(pos.x(), pos.y(), width(), height());
@@ -272,36 +282,36 @@ void MOsgWidget::moveEvent(QMoveEvent* event)
     QGraphicsView::moveEvent(event);
 }
 
-void MOsgWidget::timerEvent(QTimerEvent *event)
+void MOsgView::timerEvent(QTimerEvent *event)
 {
     scene()->update();
 }
 
-void MOsgWidget::drawBackground(QPainter *painter, const QRectF& rect)
+void MOsgView::drawBackground(QPainter *painter, const QRectF& rect)
 {
-//    if (painter->paintEngine()->type() != QPaintEngine::OpenGL2)
-//    {
-//        return;
-//    }
+    if (painter->paintEngine()->type() != QPaintEngine::OpenGL2)
+    {
+        return;
+    }
 
-//    // Save the painter state
-//    painter->save();
-//    painter->beginNativePainting();
-
-//    // OSG帧更新
-//    m_pViewer->frame();
-
-//    painter->endNativePainting();
-//    painter->restore();
-
+    // Save the painter state
+    painter->save();
     painter->beginNativePainting();
+
+    // OSG帧更新
     m_pViewer->frame();
+
     painter->endNativePainting();
+    painter->restore();
+
+    //    painter->beginNativePainting();
+    //    m_pViewer->frame();
+    //    painter->endNativePainting();
 }
 
-void MOsgWidget::drawForeground(QPainter *painter, const QRectF &rect)
+void MOsgView::drawForeground(QPainter *painter, const QRectF &rect)
 {
-//    painter->setPen( Qt::white );
-//    painter->setBrush(QBrush(QColor(255,255,0,127)));
-//    painter->drawRect(rect);
+    //    painter->setPen( Qt::white );
+    //    painter->setBrush(QBrush(QColor(255,255,0,127)));
+    //    painter->drawRect(rect);
 }

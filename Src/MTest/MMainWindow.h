@@ -6,7 +6,7 @@
 
 #include "MOpenGL/MGLWidget.h"
 #include "MOsg/MOsgScene.h"
-#include "MOsg/MOsgWidget.h"
+#include "MOsg/MOsgView.h"
 
 using namespace NS_MOpenGL;
 using namespace NS_MOsg;
@@ -33,6 +33,6 @@ private:
     MGLWidget* m_pMGLWidget = nullptr;
 
     MOsgScene* m_pMOsgScene = nullptr;
-    MOsgWidget* m_pMOsgWidget = nullptr;
+    MOsgView* m_pMOsgView = nullptr;
 };
 #endif // MMAINWINDOW_H

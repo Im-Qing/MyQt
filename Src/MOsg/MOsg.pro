@@ -18,12 +18,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     MOsg.cpp \
+    MOsgEventHandler.cpp \
     MOsgScene.cpp \
-    MOsgWidget.cpp
+    MOsgView.cpp
 
 HEADERS += \
+    MOsgEventHandler.h \
     MOsgScene.h \
-    MOsgWidget.h \
+    MOsgView.h \
     MOsg_global.h \
     MOsg.h
 
@@ -33,7 +35,7 @@ INCLUDEPATH += \
 win32{
     LIBS += \
         -L$$PWD/../../3rdPart/OpenSceneGraph-3.6.4/lib \
-            -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd
+            -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd -losgFXd
 
     TargetDir = /
     CONFIG(debug,debug|release){

@@ -1,5 +1,5 @@
-#ifndef MOSGWIDGET_H
-#define MOSGWIDGET_H
+#ifndef MOSGVIEW_H
+#define MOSGVIEW_H
 
 #include "MOsg_global.h"
 
@@ -26,10 +26,13 @@
 
 namespace NS_MOsg
 {
-class MOSG_EXPORT MOsgWidget : public QGraphicsView
+class MOSG_EXPORT MOsgView : public QGraphicsView
 {
 public:
-    MOsgWidget(MOsgScene* pScene, QWidget *parent = nullptr);
+    MOsgView(MOsgScene* pScene, QWidget *parent = nullptr);
+public:
+    void addModel(const QString& filePath);
+    osgViewer::Viewer* getOsgViewer(){ return m_pViewer; }
 protected:
     bool viewportEvent(QEvent* event);
     void setKeyboardModifiers(QInputEvent* event);
@@ -48,11 +51,12 @@ protected:
     virtual void drawBackground(QPainter *painter, const QRectF& rect);
 private:
     QGraphicsScene *m_pScene;
-    QOpenGLWidget* m_pGlViewPort;
+    //QOpenGLWidget* m_pGlViewPort;
+    QGLWidget* m_pGlViewPort;
 
     osg::ref_ptr<osgViewer::GraphicsWindow> m_pGraphicsWindow;
     osg::ref_ptr<osgViewer::Viewer> m_pViewer;
 };
 }
 
-#endif // MOSGWIDGET_H
+#endif // MOSGVIEW_H

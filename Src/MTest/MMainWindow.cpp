@@ -20,8 +20,10 @@ MMainWindow::MMainWindow(QWidget *parent)
     m_pMOsgScene = new MOsgScene(this);
     m_pMOsgScene->addNode("../../Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
 
-    m_pMOsgWidget = new MOsgWidget(m_pMOsgScene, this);
-    ui->gridLayout->addWidget(m_pMOsgWidget);
+    m_pMOsgView = new MOsgView(m_pMOsgScene, this);
+    ui->gridLayout->addWidget(m_pMOsgView);
+
+    m_pMOsgScene->setOsgView(m_pMOsgView->getOsgViewer());
 
     connect(ui->actiontest1, &QAction::triggered, this, &MMainWindow::slot_test1);
     connect(ui->actiontest2, &QAction::triggered, this, &MMainWindow::slot_test2);
