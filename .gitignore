@@ -81,4 +81,5 @@ compile_commands.json
 /Temp
 /[Bb]in
 /[Ll]ib
-
+/[Dd]ata
+/3rdPart

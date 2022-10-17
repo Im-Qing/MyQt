@@ -26,7 +26,7 @@ FORMS += \
     MMainWindow.ui
 
 INCLUDEPATH += \
-    $$PWD/../../Thirdpart \
+    $$PWD/../../3rdPart \
     $$PWD/../../Src
 
 RESOURCES += \
