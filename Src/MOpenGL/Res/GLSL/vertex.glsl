@@ -1,4 +1,4 @@
-﻿attribute vec3 vPos;
+attribute vec3 vPos;
 
 void main(void)
 {

@@ -59,15 +59,20 @@ void MGLModel::setVertices(float *vertices, int nSize)
     m_vertexBufferSize = nSize;
 }
 
-void MGLModel::setAttributeBuffer(const char *name, GLenum type, int offset, int tupleSize, int stride)
+void MGLModel::setAttributeBuffer(const QString& name, GLenum type, int offset, int tupleSize, int stride)
 {
-    m_shaderProgram.setAttributeBuffer(name, type, offset, tupleSize, stride);
-    m_shaderProgram.enableAttributeArray(name);
+    MGLAttributeBufferPara attributeBufferPara;
+    attributeBufferPara.name = name;
+    attributeBufferPara.type = type;
+    attributeBufferPara.offset = offset;
+    attributeBufferPara.tupleSize = tupleSize;
+    attributeBufferPara.stride = stride;
+    m_mapNameToAttributeBufferPara[name] = attributeBufferPara;
 }
 
 bool MGLModel::addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QString &fileName)
 {
-    m_shaderProgram.addShaderFromSourceFile(type, fileName);
+    m_mapShaderTypeToShaderFile[type] = fileName;
 }
 
 QString MGLModel::getName()
