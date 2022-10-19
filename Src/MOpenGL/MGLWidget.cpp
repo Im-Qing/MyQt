@@ -47,6 +47,12 @@ float normalVertices[] = {
     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 };
 
+float vertices[] = {
+        -0.5f, -0.5f, 0.0f, // left
+         0.5f, -0.5f, 0.0f, // right
+         0.0f,  0.5f, 0.0f  // top
+    };
+
 MGLWidget::MGLWidget(QWidget *parent)
     : QOpenGLWidget(parent), QOpenGLExtraFunctions()
 {
@@ -56,8 +62,8 @@ MGLWidget::MGLWidget(QWidget *parent)
     connect(m_pGLCamera, &MGLCamera::sign_projectionMatChanged, this, &MGLWidget::slot_cameraProjectionChanged, Qt::QueuedConnection);
     connect(m_pGLCamera, &MGLCamera::sign_viewMatChanged, this, &MGLWidget::slot_cameraViewMatChanged, Qt::QueuedConnection);
 
-    m_pObject = new MGLModel(this);
-    m_pLight = new MGLModel(this);
+    m_pObject = new MGLModel("object", this);
+    m_pLight = new MGLModel("lignt", this);
 
     m_pTimer = new QTimer(this);
     //m_pTimer->start(1000);
@@ -80,15 +86,16 @@ void MGLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
-    m_pObject->setVertices(normalVertices, sizeof(normalVertices));
-    m_pObject->setTexture(":/Img/Res/Img/container2.png", 0);
-    m_pObject->setTexture(":/Img/Res/Img/container2_specular.png", 1);
+    m_pObject->setVertices(vertices, sizeof(vertices));
+//    m_pObject->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/GLSL/Res/GLSL/vertex.glsl");
+//    m_pObject->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/GLSL/Res/GLSL/fragment.glsl");
+//    m_pObject->setAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 3*sizeof(float));
     m_pObject->initialize();
 
-    m_pLight->setVertices(normalVertices, sizeof(normalVertices));
-    m_pLight->setTexture(":/Img/Res/Img/container2.png", 0);
-    m_pLight->setTexture(":/Img/Res/Img/container2_specular.png", 1);
-    m_pLight->initialize();
+//    m_pLight->setVertices(normalVertices, sizeof(normalVertices));
+//    m_pObject->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/GLSL/Res/GLSL/vertex.glsl");
+//    m_pObject->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/GLSL/Res/GLSL/fragment.glsl");
+//    m_pLight->initialize();
 }
 
 void MGLWidget::paintGL()
@@ -98,36 +105,19 @@ void MGLWidget::paintGL()
     float angle = 15.0f;
     model = glm::rotate(model, glm::radians(angle), glm::vec3(-0.0f, 1.0f, 0.0f));
     model = glm::scale(model, glm::vec3(1, 1, 1));
-    m_pObject->paint(glmMat4ToQMat4(model), m_pGLCamera->getViewMat(), m_pGLCamera->getProjectionMat(), m_pGLCamera->getCameraPos(), true);
+    m_pObject->paint(MOpenGL::glmMat4ToQMat4(model), m_pGLCamera->getViewMat(), m_pGLCamera->getProjectionMat(), m_pGLCamera->getCameraPos());
 
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(5.f, -0.2f, 1.0f));
-    angle = 0.0f;
-    model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-    model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
-    m_pLight->paint(glmMat4ToQMat4(model), m_pGLCamera->getViewMat(), m_pGLCamera->getProjectionMat(), m_pGLCamera->getCameraPos(), false);
+//    model = glm::mat4(1.0f);
+//    model = glm::translate(model, glm::vec3(5.f, -0.2f, 1.0f));
+//    angle = 0.0f;
+//    model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+//    model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
+//    m_pLight->paint(glmMat4ToQMat4(model), m_pGLCamera->getViewMat(), m_pGLCamera->getProjectionMat(), m_pGLCamera->getCameraPos(), false);
 }
 
 void MGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);  //这里是显示窗体，上面有截取，这里才有显示。不然窗口不会显示任何内容
-}
-
-QMatrix4x4 MGLWidget::glmMat4ToQMat4(glm::mat4 mat4)
-{
-    QMatrix4x4 matRes;
-
-    for(int c = 0; c < 4; c++)
-    {
-        QVector4D row;
-        row.setX(mat4[0][c]);
-        row.setY(mat4[1][c]);
-        row.setZ(mat4[2][c]);
-        row.setW(mat4[3][c]);
-        matRes.setRow(c, row);
-    }
-
-    return matRes;
 }
 
 void MGLWidget::slot_cameraProjectionChanged(QMatrix4x4 projectionMat)

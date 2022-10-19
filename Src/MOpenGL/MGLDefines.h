@@ -1,8 +1,15 @@
 ﻿#ifndef MGLDEFINES_H
 #define MGLDEFINES_H
 
+#include <QMatrix4x4>
+#include <QDebug>
 #include <QVector2D>
 #include <QVector3D>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define ILLEGALVector3D QVector3D(-100, -100, -100)
 #define ILLEGALVector2D QVector2D(-100, -100)

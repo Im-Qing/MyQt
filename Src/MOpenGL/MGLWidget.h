@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <QDebug>
 
+#include "MOpenGL.h"
 #include "MGLCamera.h"
 #include "MGLModel.h"
 
@@ -25,8 +26,6 @@ protected:
     void initializeGL();
     void paintGL();
     void resizeGL(int w, int h);
-private:
-    QMatrix4x4 glmMat4ToQMat4(glm::mat4 mat4);
 public slots:
     void slot_cameraProjectionChanged(QMatrix4x4 projectionMat);
     void slot_cameraViewMatChanged(QMatrix4x4 viewMat);

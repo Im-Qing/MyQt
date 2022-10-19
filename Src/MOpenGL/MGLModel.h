@@ -9,49 +9,34 @@
 #include <QOpenGLTexture>
 #include <QTime>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include "MGLDefines.h"
+#include "MOpenGL.h"
 
 namespace NS_MOpenGL
 {
+
+class MGLScene;
+
 class MGLModel : public QObject, public QOpenGLExtraFunctions
 {
     Q_OBJECT
 public:
-    explicit MGLModel(QObject *parent = nullptr);
-public:
-    void setVertices(const QVector<MGLVertex> &vertices);
-    void setVertices(float *vertices, int nSize);
-    void setTexture(const QString& imgSrc, int index);
-    void setPos(const QVector3D& pos);
-    void setScale(const QVector3D& scale);
-    void setRotate(const QVector3D& rotate);
+    explicit MGLModel(const QString& name, QObject *parent = nullptr);
 public:
     void initialize();
-    void paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos, bool isObject);
+    virtual void paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
+public:
+    void setVertices(float *vertices, int nSize);
+    void setAttributeBuffer (const char *name, GLenum type, int offset, int tupleSize, int stride = 0);
+    bool addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QString& fileName);
+public:
+    QString getName();
 private:
-    QMatrix4x4 glmMat4ToQMat4(glm::mat4 mat4);
-private:
-    QVector<MGLVertex> m_vertices;               //顶点
-    QMap<int, QString> m_texturesImgsrc;         //纹理图片
-    QMap<int, QOpenGLTexture*> m_textures;       //纹理
-    QOpenGLTexture m_texture;
-    QOpenGLTexture m_texture1;
-    QVector3D m_pos;
-    QVector3D m_scale;
-    QVector3D m_rotate;
-
+    QString m_name;     //模型名称
+    float *m_pVertexBuffer = nullptr;       //模型顶点数据
+    int m_vertexBufferSize;     //模型顶点数据大小
     QOpenGLVertexArrayObject m_vao;
     QOpenGLBuffer m_vbo;
     QOpenGLShaderProgram m_shaderProgram;
-    float *m_pVertexBuffer = nullptr;
-    int m_vertexBufferSize;
-    QVector3D m_vertexWeightLen = QVector3D(0, 0, 0);            //顶点各分量的float长度（位置，颜色，纹理），如果这三个顶点数据都有的话则值为(3, 3, 2)
-    int m_vertexFloatCount;
 };
 }
 

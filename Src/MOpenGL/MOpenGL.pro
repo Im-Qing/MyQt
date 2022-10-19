@@ -20,7 +20,8 @@ SOURCES += \
     MGLCamera.cpp \
     MGLWidget.cpp \
     MOpenGL.cpp \
-    MGLModel.cpp
+    MGLModel.cpp \
+    MGLScene.cpp
 
 HEADERS += \
     MGLCamera.h \
@@ -28,7 +29,8 @@ HEADERS += \
     MOpenGL_global.h \
     MOpenGL.h \
     MGLModel.h \
-    MGLDefines.h
+    MGLDefines.h \
+    MGLScene.h
 
 RESOURCES += \
     Res.qrc
