@@ -2,7 +2,7 @@
 #define MGLMODEL_H
 
 #include <QObject>
-#include <QOpenGLExtraFunctions>
+
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
@@ -16,7 +16,7 @@ namespace NS_MOpenGL
 
 class MGLScene;
 
-class MGLModel : public QObject, public QOpenGLExtraFunctions
+class MOPENGL_EXPORT MGLModel : public QObject, public QOpenGLExtraFunctions
 {
     Q_OBJECT
 public:
@@ -27,7 +27,7 @@ public:
 public:
     void setVertices(float *vertices, int nSize);
     void setAttributeBuffer (const QString& name, GLenum type, int offset, int tupleSize, int stride = 0);
-    bool addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QString& fileName);
+    void addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QString& fileName);
 public:
     QString getName();
 private:

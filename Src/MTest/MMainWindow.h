@@ -4,7 +4,9 @@
 #include <QMainWindow>
 #include <QTimer>
 
+#include "MOpenGL/MGLScene.h"
 #include "MOpenGL/MGLWidget.h"
+#include "MOpenGL/MGLModel.h"
 
 using namespace NS_MOpenGL;
 
@@ -25,7 +27,10 @@ public slots:
     void slot_test2(bool);
 private:
     Ui::MMainWindow *ui;
-    MGLWidget* m_pMGLWidget = nullptr;
     QTimer* m_pTimer;
+
+    MGLScene* m_pGLScene = nullptr;
+    MGLWidget* m_pGLWidget = nullptr;
+    MGLModel* m_pGLModel = nullptr;
 };
 #endif // MMAINWINDOW_H

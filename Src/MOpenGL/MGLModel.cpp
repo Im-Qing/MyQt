@@ -23,19 +23,29 @@ void MGLModel::initialize()
 
     //顶点数据
     m_vbo.allocate(m_pVertexBuffer, m_vertexBufferSize);
-
     //着色器加载链接
-    m_shaderProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/GLSL/Res/GLSL/vertex.glsl");
-    m_shaderProgram.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/GLSL/Res/GLSL/fragment.glsl");
-    m_shaderProgram.link();
-
+    {
+        QMapIterator<QOpenGLShader::ShaderType, QString> iter(m_mapShaderTypeToShaderFile);
+        while (iter.hasNext())
+        {
+            iter.next();
+            m_shaderProgram.addShaderFromSourceFile(iter.key(), iter.value());
+        }
+        m_shaderProgram.link();
+    }
     //着色器解析规则
-    m_shaderProgram.setAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 3*sizeof(float));
-    m_shaderProgram.enableAttributeArray("vPos");
-//    m_shaderProgram.setAttributeBuffer("vNormal", GL_FLOAT, 3*sizeof(float), 3, 8*sizeof(float));
-//    m_shaderProgram.enableAttributeArray("vNormal");
-//    m_shaderProgram.setAttributeBuffer("vTextureCoords", GL_FLOAT, 6*sizeof(float), 2, 8*sizeof(float));
-//    m_shaderProgram.enableAttributeArray("vTextureCoords");
+    {
+        QMapIterator<QString, MGLAttributeBufferPara> iter(m_mapNameToAttributeBufferPara);
+        while (iter.hasNext())
+        {
+            iter.next();
+            QString name = iter.key();
+            MGLAttributeBufferPara para = iter.value();
+            m_shaderProgram.setAttributeBuffer(name.toStdString().c_str(), para.type, para.offset, para.tupleSize, para.stride);
+            m_shaderProgram.enableAttributeArray(name.toStdString().c_str());
+        }
+        m_shaderProgram.link();
+    }
 
     m_shaderProgram.release();
     m_vbo.release();
@@ -70,7 +80,7 @@ void MGLModel::setAttributeBuffer(const QString& name, GLenum type, int offset, 
     m_mapNameToAttributeBufferPara[name] = attributeBufferPara;
 }
 
-bool MGLModel::addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QString &fileName)
+void MGLModel::addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QString &fileName)
 {
     m_mapShaderTypeToShaderFile[type] = fileName;
 }

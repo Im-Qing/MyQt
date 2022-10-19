@@ -5,13 +5,13 @@
 #include <QDebug>
 #include <QVector2D>
 #include <QVector3D>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLExtraFunctions>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
-
-#include <gltypes.h>
 
 namespace NS_MOpenGL
 {

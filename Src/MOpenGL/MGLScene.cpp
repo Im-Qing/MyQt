@@ -14,5 +14,11 @@ void MGLScene::addModel(MGLModel *model)
     if(!m_mapNameToModel.contains(modelName))
     {
         m_mapNameToModel[modelName] = model;
+        model->initialize();
     }
+}
+
+QList<MGLModel *> MGLScene::getAllModel()
+{
+    return m_mapNameToModel.values();
 }
