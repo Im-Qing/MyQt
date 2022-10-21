@@ -106,22 +106,6 @@ void MGLModel::initialize()
     qDebug() << QString("initialize model res = %1, modelId = %2").arg(m_isInitializeFinished).arg(m_id);
 }
 
-void MGLModel::paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
-{
-    if(m_isInitializeFinished)
-    {
-        m_vao.bind();
-        m_shaderProgram.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
-        m_shaderProgram.release();
-        m_vao.release();
-    }
-    else
-    {
-        qDebug() << QString("paint model fail, m_isInitializeFinished = %1, modelId = %2").arg(m_isInitializeFinished).arg(m_id);
-    }
-}
-
 void MGLModel::setScene(MGLScene* scene)
 {
     m_pScene = scene;

@@ -1,7 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>Res/591424f04b1f7e6445ed63286b46eebe.png</file>
-        <file>Res/yellow_default.svg</file>
-        <file>Res/invite_people_nor.svg</file>
+        <file>Res/GLSL/fragment.glsl</file>
+        <file>Res/GLSL/vertex.glsl</file>
+        <file>Res/Img/container2_specular.png</file>
+        <file>Res/Img/container2.png</file>
+        <file>Res/Img/onetwo.jpg</file>
     </qresource>
 </RCC>

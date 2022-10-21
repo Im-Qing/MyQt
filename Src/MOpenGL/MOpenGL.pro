@@ -32,9 +32,6 @@ HEADERS += \
     MGLDefines.h \
     MGLScene.h
 
-RESOURCES += \
-    Res.qrc
-
 INCLUDEPATH += \
     $$PWD/../../3rdPart
 

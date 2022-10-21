@@ -49,10 +49,22 @@ float normalVertices[] = {
 };
 
 float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left
-         0.5f, -0.5f, 0.0f, // right
-         0.0f,  0.5f, 0.0f  // top
-    };
+    // 位置              // 颜色
+     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
+    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
+     0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部
+};
+
+//float vertices[] = {
+//    // 第一个三角形
+//    0.5f, 0.5f, 0.0f,   // 右上角
+//    0.5f, -0.5f, 0.0f,  // 右下角
+//    -0.5f, 0.5f, 0.0f,  // 左上角
+//    // 第二个三角形
+//    0.5f, -0.5f, 0.0f,  // 右下角
+//    -0.5f, -0.5f, 0.0f, // 左下角
+//    -0.5f, 0.5f, 0.0f   // 左上角
+//};
 
 MMainWindow::MMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -73,6 +85,8 @@ MMainWindow::MMainWindow(QWidget *parent)
     connect(m_pTimer, &QTimer::timeout,this,&MMainWindow::slot_timeout);
     connect(ui->actiontest1, &QAction::triggered, this, &MMainWindow::slot_test1);
     connect(ui->actiontest2, &QAction::triggered, this, &MMainWindow::slot_test2);
+
+    slot_test1(true);
 }
 
 MMainWindow::~MMainWindow()
@@ -88,17 +102,12 @@ void MMainWindow::slot_timeout()
 void MMainWindow::slot_test1(bool)
 {
     //模型
-    m_pGLModel = new MGLModel(1, m_pGLScene);
+    m_pGLModel = new MModelTest(1, m_pGLScene);
     m_pGLModel->setVertices(vertices, sizeof(vertices));
-    m_pGLModel->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/GLSL/Res/GLSL/vertex.glsl");
-    m_pGLModel->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/GLSL/Res/GLSL/fragment.glsl");
-    m_pGLModel->addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 3*sizeof(float));
-    //    m_shaderProgram.setAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 3*sizeof(float));
-    //    m_shaderProgram.enableAttributeArray("vPos");
-    //    m_shaderProgram.setAttributeBuffer("vNormal", GL_FLOAT, 3*sizeof(float), 3, 8*sizeof(float));
-    //    m_shaderProgram.enableAttributeArray("vNormal");
-    //    m_shaderProgram.setAttributeBuffer("vTextureCoords", GL_FLOAT, 6*sizeof(float), 2, 8*sizeof(float));
-    //    m_shaderProgram.enableAttributeArray("vTextureCoords");
+    m_pGLModel->addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
+    m_pGLModel->addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fragment.glsl");
+    m_pGLModel->addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 6*sizeof(float));
+    m_pGLModel->addAttributeBuffer("vColor", GL_FLOAT, 3*sizeof(float), 3, 6*sizeof(float));
     //添加模型到场景
     m_pGLScene->addModel(m_pGLModel);
 

@@ -18,11 +18,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     main.cpp \
     MMainWindow.cpp \
-    SystemCapabilityCalculation.cpp
+    SystemCapabilityCalculation.cpp \
+    MModelTest.cpp
 
 HEADERS += \
     MMainWindow.h \
-    SystemCapabilityCalculation.h
+    SystemCapabilityCalculation.h \
+    MModelTest.h
 
 FORMS += \
     MMainWindow.ui

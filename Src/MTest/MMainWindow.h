@@ -6,7 +6,8 @@
 
 #include "MOpenGL/MGLScene.h"
 #include "MOpenGL/MGLWidget.h"
-#include "MOpenGL/MGLModel.h"
+
+#include "MModelTest.h"
 
 using namespace NS_MOpenGL;
 
@@ -31,6 +32,6 @@ private:
 
     MGLScene* m_pGLScene = nullptr;
     MGLWidget* m_pGLWidget = nullptr;
-    MGLModel* m_pGLModel = nullptr;
+    MModelTest* m_pGLModel = nullptr;
 };
 #endif // MMAINWINDOW_H
