@@ -9,9 +9,10 @@
 namespace NS_MOpenGL
 {
 
+class MGLWidget;
 class MGLModel;
 
-class MOPENGL_EXPORT MGLScene : public QObject
+class MOPENGL_EXPORT MGLScene : public QObject, public QOpenGLExtraFunctions
 {
     Q_OBJECT
 
@@ -22,7 +23,15 @@ public:
 public:
     QList<MGLModel*> getAllModel();
 private:
-    QMap<QString,MGLModel*> m_mapNameToModel;
+    void setGLWidget(MGLWidget* glWidget);
+
+    MGLWidget* getGLWidget(){ return m_pGLWidget; };
+private:
+    MGLWidget* m_pGLWidget = nullptr;
+    QMap<int,MGLModel*> m_mapIdToModel;
+
+    friend class MGLWidget;
+    friend class MGLModel;
 };
 }
 

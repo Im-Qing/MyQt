@@ -1,66 +1,18 @@
 ﻿#include "MGLModel.h"
 #include "MGLScene.h"
+#include "MGLWidget.h"
 
 using namespace NS_MOpenGL;
 
-MGLModel::MGLModel(const QString& name, QObject *parent) : QObject(parent)
-  ,m_name(name)
+MGLModel::MGLModel(int id, QObject *parent) : QObject(parent)
+  ,m_id(id)
 {
 
 }
 
-void MGLModel::initialize()
+void MGLModel::setName(const QString &name)
 {
-    initializeOpenGLFunctions();
-
-    m_vao.create();
-    m_vbo.create();
-    m_shaderProgram.create();
-
-    m_vao.bind();
-    m_vbo.bind();
-    m_shaderProgram.bind();
-
-    //顶点数据
-    m_vbo.allocate(m_pVertexBuffer, m_vertexBufferSize);
-    //着色器加载链接
-    {
-        QMapIterator<QOpenGLShader::ShaderType, QString> iter(m_mapShaderTypeToShaderFile);
-        while (iter.hasNext())
-        {
-            iter.next();
-            m_shaderProgram.addShaderFromSourceFile(iter.key(), iter.value());
-        }
-        m_shaderProgram.link();
-    }
-    //着色器解析规则
-    {
-        QMapIterator<QString, MGLAttributeBufferPara> iter(m_mapNameToAttributeBufferPara);
-        while (iter.hasNext())
-        {
-            iter.next();
-            QString name = iter.key();
-            MGLAttributeBufferPara para = iter.value();
-            m_shaderProgram.setAttributeBuffer(name.toStdString().c_str(), para.type, para.offset, para.tupleSize, para.stride);
-            m_shaderProgram.enableAttributeArray(name.toStdString().c_str());
-        }
-        m_shaderProgram.link();
-    }
-
-    m_shaderProgram.release();
-    m_vbo.release();
-    m_vao.release();
-}
-
-void MGLModel::paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
-{
-    m_vao.bind();
-    m_shaderProgram.bind();
-
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-
-    m_shaderProgram.release();
-    m_vao.release();
+    m_name = name;
 }
 
 void MGLModel::setVertices(float *vertices, int nSize)
@@ -69,7 +21,22 @@ void MGLModel::setVertices(float *vertices, int nSize)
     m_vertexBufferSize = nSize;
 }
 
-void MGLModel::setAttributeBuffer(const QString& name, GLenum type, int offset, int tupleSize, int stride)
+int MGLModel::getId()
+{
+    return m_id;
+}
+
+QString MGLModel::getName()
+{
+    return m_name;
+}
+
+MGLScene *MGLModel::getScene()
+{
+    return m_pScene;
+}
+
+void MGLModel::addAttributeBuffer(const QString& name, GLenum type, int offset, int tupleSize, int stride)
 {
     MGLAttributeBufferPara attributeBufferPara;
     attributeBufferPara.name = name;
@@ -85,9 +52,79 @@ void MGLModel::addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QSt
     m_mapShaderTypeToShaderFile[type] = fileName;
 }
 
-QString MGLModel::getName()
+void MGLModel::initialize()
 {
-    return m_name;
+    MGLWidget* pGLWidget = m_pScene->getGLWidget();
+    if(!m_isInitializeFinished && pGLWidget && pGLWidget->context())
+    {
+        m_vao.create();
+        m_vbo.create();
+        m_shaderProgram.create();
+
+        m_vao.bind();
+        m_vbo.bind();
+        m_shaderProgram.bind();
+
+        //顶点数据
+        m_vbo.allocate(m_pVertexBuffer, m_vertexBufferSize);
+        //着色器程序文件链接
+        {
+            QMapIterator<QOpenGLShader::ShaderType, QString> iter(m_mapShaderTypeToShaderFile);
+            while (iter.hasNext())
+            {
+                iter.next();
+                m_shaderProgram.addShaderFromSourceFile(iter.key(), iter.value());
+            }
+            m_shaderProgram.link();
+        }
+        //顶点数据规则
+        {
+            QMapIterator<QString, MGLAttributeBufferPara> iter(m_mapNameToAttributeBufferPara);
+            while (iter.hasNext())
+            {
+                iter.next();
+                QString name = iter.key();
+                MGLAttributeBufferPara para = iter.value();
+                m_shaderProgram.setAttributeBuffer(name.toStdString().c_str(), para.type, para.offset, para.tupleSize, para.stride);
+                m_shaderProgram.enableAttributeArray(name.toStdString().c_str());
+            }
+        }
+
+        m_shaderProgram.release();
+        m_vbo.release();
+        m_vao.release();
+
+        initializeOpenGLFunctions();
+        m_isInitializeFinished = true;
+    }
+    else
+    {
+        qDebug() << "m_isInitializeFinished = " << m_isInitializeFinished;
+        qDebug() << "pGLWidget = " << pGLWidget;
+    }
+
+    qDebug() << QString("initialize model res = %1, modelId = %2").arg(m_isInitializeFinished).arg(m_id);
+}
+
+void MGLModel::paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
+{
+    if(m_isInitializeFinished)
+    {
+        m_vao.bind();
+        m_shaderProgram.bind();
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        m_shaderProgram.release();
+        m_vao.release();
+    }
+    else
+    {
+        qDebug() << QString("paint model fail, m_isInitializeFinished = %1, modelId = %2").arg(m_isInitializeFinished).arg(m_id);
+    }
+}
+
+void MGLModel::setScene(MGLScene* scene)
+{
+    m_pScene = scene;
 }
 
 

@@ -21,8 +21,6 @@ class MOPENGL_EXPORT MGLWidget : public QOpenGLWidget , protected QOpenGLExtraFu
 public:
     MGLWidget(MGLScene* scene, QWidget *parent = Q_NULLPTR);
     ~MGLWidget();
-public slots:
-    void slot_timeout();
 protected:
     void initializeGL();
     void paintGL();
@@ -33,5 +31,8 @@ public slots:
 private:
     MGLScene* m_pScene;
     MGLCamera* m_pGLCamera;
+
+    friend class MGLScene;
+    friend class MGLModel;
 };
 }

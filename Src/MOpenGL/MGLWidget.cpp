@@ -10,6 +10,8 @@ MGLWidget::MGLWidget(MGLScene* scene, QWidget *parent)
 {
     setFocusPolicy(Qt::ClickFocus);
 
+    m_pScene->setGLWidget(this);
+
     m_pGLCamera = new MGLCamera(this);
     connect(m_pGLCamera, &MGLCamera::sign_projectionMatChanged, this, &MGLWidget::slot_cameraProjectionChanged, Qt::QueuedConnection);
     connect(m_pGLCamera, &MGLCamera::sign_viewMatChanged, this, &MGLWidget::slot_cameraViewMatChanged, Qt::QueuedConnection);
@@ -20,16 +22,18 @@ MGLWidget::~MGLWidget()
 
 }
 
-void MGLWidget::slot_timeout()
-{
-    repaint();
-}
-
 void MGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+    //初始化已添加的模型
+    QList<MGLModel *> modelList = m_pScene->getAllModel();
+    for(auto pModel : modelList)
+    {
+        pModel->initialize();
+    }
 }
 
 void MGLWidget::paintGL()
