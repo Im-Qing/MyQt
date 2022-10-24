@@ -38,17 +38,11 @@ void MGLWidget::initializeGL()
 
 void MGLWidget::paintGL()
 {
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    float angle = 15.0f;
-    model = glm::rotate(model, glm::radians(angle), glm::vec3(-0.0f, 1.0f, 0.0f));
-    model = glm::scale(model, glm::vec3(1, 1, 1));
-
     //渲染模型
     QList<MGLModel *> modelList = m_pScene->getAllModel();
     for(auto pModel : modelList)
     {
-        pModel->paint(MOpenGL::glmMat4ToQMat4(model), m_pGLCamera->getViewMat(), m_pGLCamera->getProjectionMat(), m_pGLCamera->getCameraPos());
+        pModel->paintGL(m_pGLCamera->getViewMat(), m_pGLCamera->getProjectionMat(), m_pGLCamera->getCameraPos());
     }
 }
 

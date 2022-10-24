@@ -31,10 +31,12 @@ public:
     void addAttributeBuffer (const QString& name, GLenum type, int offset, int tupleSize, int stride = 0);
     void addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QString& fileName);
 protected:
-    void initialize();
-    virtual void paint(QMatrix4x4 modelMat, QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos) = 0;
-    bool isInitializeFinished(){ return m_isInitializeFinished; }
+    //真正的模型绘制函数，需要继承重写
+    virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos) = 0;
 private:
+    void initialize();
+    //由MGLWidget对象调用
+    void paintGL(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
     void setScene(MGLScene* scene);
 private:
     MGLScene *m_pScene;
@@ -46,7 +48,7 @@ private:
     int m_vertexBufferSize;                 //模型顶点数据大小
     QMap<QOpenGLShader::ShaderType, QString> m_mapShaderTypeToShaderFile;       //着色器程序文件集合
     QMap<QString, MGLAttributeBufferPara> m_mapNameToAttributeBufferPara;       //顶点数据buffer定义集合
-protected:
+
     //vao,vbo,shaderProgram
     QOpenGLVertexArrayObject m_vao;
     QOpenGLBuffer m_vbo;
