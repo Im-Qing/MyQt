@@ -12,6 +12,18 @@ MGLModel::MGLModel(int id, QObject *parent) : QObject(parent)
 
 }
 
+MGLModel::~MGLModel()
+{
+    m_pScene->getGLWidget()->makeCurrent();
+    //释放纹理数据
+    QMapIterator<int, QOpenGLTexture*> iter(m_mapIndexToTextureData);
+    while (iter.hasNext())
+    {
+        iter.next();
+        delete iter.value();
+    }
+}
+
 void MGLModel::setName(const QString &name)
 {
     m_name = name;
@@ -60,6 +72,12 @@ void MGLModel::addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QSt
     m_mapShaderTypeToShaderFile[type] = fileName;
 }
 
+void MGLModel::addTextureFile(int index, const QString& variableName, const QString &fileName)
+{
+    m_mapIndexToVariableName[index] = variableName;
+    m_mapIndexToTextureFile[index] = fileName;
+}
+
 void MGLModel::initialize()
 {
     MGLWidget* pGLWidget = m_pScene->getGLWidget();
@@ -82,6 +100,13 @@ void MGLModel::initialize()
             return;
         }
         m_vbo.allocate(m_pVertexBuffer, m_vertexBufferSize);
+        //纹理数据
+        QMapIterator<int, QString> iter(m_mapIndexToTextureFile);
+        while (iter.hasNext())
+        {
+            iter.next();
+            m_mapIndexToTextureData[iter.key()] = new QOpenGLTexture(QImage(iter.value()).mirrored());
+        }
         //索引缓冲数据
         if(m_pIndexBuffer)
         {
@@ -137,7 +162,9 @@ void MGLModel::paintGL(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D c
     {
         m_vao.bind();
         m_shaderProgram.bind();
+        bindTextures();
         paint(viewMat, projectionMat, cameraPos);
+        releaseTextures();
         m_shaderProgram.release();
         m_vao.release();
     }
@@ -150,6 +177,28 @@ void MGLModel::paintGL(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D c
 void MGLModel::setScene(MGLScene* scene)
 {
     m_pScene = scene;
+}
+
+void MGLModel::bindTextures()
+{
+    QMapIterator<int, QString> iter(m_mapIndexToTextureFile);
+    while (iter.hasNext())
+    {
+        iter.next();
+        int index = iter.key();
+        m_shaderProgram.setUniformValue(m_mapIndexToVariableName[index].toStdString().c_str(), index);
+        m_mapIndexToTextureData[index]->bind(index);
+    }
+}
+
+void MGLModel::releaseTextures()
+{
+    QMapIterator<int, QOpenGLTexture*> iter(m_mapIndexToTextureData);
+    while (iter.hasNext())
+    {
+        iter.next();
+        iter.value()->release();
+    }
 }
 
 
