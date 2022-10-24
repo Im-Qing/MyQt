@@ -8,7 +8,7 @@ MMainWindow::MMainWindow(QWidget *parent)
     , ui(new Ui::MMainWindow)
 {
     ui->setupUi(this);
-    resize(400, 300);
+    resize(800, 600);
 
     //场景
     m_pGLScene = new MGLScene(this);

@@ -21,20 +21,33 @@ MGLModel *MModelTest::getModel()
 
 MModelShape::MModelShape(int id, QObject *parent) : MGLModel(id, parent)
 {
-    static float vertices[] = {
-        // 位置              // 颜色
-         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,    // 右下
-         0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
-        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // 顶点
-        -0.5f, 0.5f, 0.0f,   1.0f, 1.0f, 0.0f    // 左上角
+    //正方体
+    static float vertices[] =
+    {
+         // 位置            // 颜色
+        -0.5, -0.5, -0.5,  1.0f, 0.0f, 0.0f,
+        -0.5, -0.5, 0.5,   0.0f, 1.0f, 0.0f,
+        0.5, -0.5, 0.5,    0.0f, 0.0f, 1.0f,
+        0.5, -0.5, -0.5,   1.0f, 1.0f, 0.0f,
+        -0.5, 0.5, -0.5,   0.0f, 0.0f, 1.0f,
+        -0.5, 0.5, 0.5,    0.0f, 1.0f, 0.0f,
+        0.5, 0.5, 0.5,     1.0f, 0.0f, 0.0f,
+        0.5, 0.5,-0.5,     0.0f, 1.0f, 0.0f
     };
-    static unsigned int indices[] = {
-        // 注意索引从0开始!
-        // 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
-        // 这样可以由下标代表顶点组合成矩形
-
-        0, 1, 3, // 第一个三角形
-        1, 2, 3  // 第二个三角形
+    static unsigned int indices[] =
+    {
+        0,2,1,
+        0,2,3,
+        2,5,1,
+        2,5,6,
+        2,7,3,
+        2,7,6,
+        0,5,1,
+        0,5,4,
+        4,6,5,
+        4,6,7,
+        0,7,4,
+        0,7,3
     };
     setVertices(vertices, sizeof(vertices));
     setIndexs(indices, sizeof(indices));
@@ -46,7 +59,13 @@ MModelShape::MModelShape(int id, QObject *parent) : MGLModel(id, parent)
 
 void MModelShape::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
-    //glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram();
+
+    glm::mat4 modelMat = glm::mat4(1.0f); ;
+    pShaderProgram->setUniformValue("model", MOpenGL::glmMat4ToQMat4(modelMat));
+    pShaderProgram->setUniformValue("view", viewMat);
+    pShaderProgram->setUniformValue("projection", projectionMat);
+
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
 
