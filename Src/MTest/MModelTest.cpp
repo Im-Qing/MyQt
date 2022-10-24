@@ -26,7 +26,7 @@ MModelShape::MModelShape(int id, QObject *parent) : MGLModel(id, parent)
          0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,    // 右下
          0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
         -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // 顶点
-        -0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f    // 左上角
+        -0.5f, 0.5f, 0.0f,   1.0f, 1.0f, 0.0f    // 左上角
     };
     static unsigned int indices[] = {
         // 注意索引从0开始!
@@ -47,6 +47,6 @@ MModelShape::MModelShape(int id, QObject *parent) : MGLModel(id, parent)
 void MModelShape::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
     //glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 

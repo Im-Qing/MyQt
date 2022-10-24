@@ -85,7 +85,7 @@ void MGLModel::initialize()
         //索引缓冲数据
         if(m_pIndexBuffer)
         {
-            //m_ebo.setUsagePattern(QOpenGLBuffer::StaticDraw);
+            m_ebo.setUsagePattern(QOpenGLBuffer::StaticDraw);
             m_ebo.allocate(m_pIndexBuffer, m_indexBufferSize);
         }
         else
@@ -116,7 +116,6 @@ void MGLModel::initialize()
         }
 
         m_shaderProgram.release();
-        m_ebo.release();
         m_vbo.release();
         m_vao.release();
 
