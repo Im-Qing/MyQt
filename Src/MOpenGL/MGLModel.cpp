@@ -5,7 +5,9 @@
 using namespace NS_MOpenGL;
 
 MGLModel::MGLModel(int id, QObject *parent) : QObject(parent)
-  ,m_id(id)
+  , m_id(id)
+  , m_vbo(QOpenGLBuffer::VertexBuffer)
+  , m_ebo(QOpenGLBuffer::IndexBuffer)
 {
 
 }
@@ -15,10 +17,16 @@ void MGLModel::setName(const QString &name)
     m_name = name;
 }
 
-void MGLModel::setVertices(float *vertices, int nSize)
+void MGLModel::setVertices(float* vertices, int nSize)
 {
     m_pVertexBuffer = vertices;
     m_vertexBufferSize = nSize;
+}
+
+void MGLModel::setIndexs(unsigned int* indexs, int nSize)
+{
+    m_pIndexBuffer = indexs;
+    m_indexBufferSize = nSize;
 }
 
 int MGLModel::getId()
@@ -59,14 +67,31 @@ void MGLModel::initialize()
     {
         m_vao.create();
         m_vbo.create();
+        m_ebo.create();
         m_shaderProgram.create();
 
         m_vao.bind();
         m_vbo.bind();
+        m_ebo.bind();
         m_shaderProgram.bind();
 
-        //顶点数据
+        //顶点缓冲数据
+        if(!m_pVertexBuffer)
+        {
+            qDebug()<<"vertexBuffer is nullptr";
+            return;
+        }
         m_vbo.allocate(m_pVertexBuffer, m_vertexBufferSize);
+        //索引缓冲数据
+        if(m_pIndexBuffer)
+        {
+            //m_ebo.setUsagePattern(QOpenGLBuffer::StaticDraw);
+            m_ebo.allocate(m_pIndexBuffer, m_indexBufferSize);
+        }
+        else
+        {
+            qDebug()<<"indexBuffer is nullptr";
+        }
         //着色器程序文件链接
         {
             QMapIterator<QOpenGLShader::ShaderType, QString> iter(m_mapShaderTypeToShaderFile);
@@ -91,6 +116,7 @@ void MGLModel::initialize()
         }
 
         m_shaderProgram.release();
+        m_ebo.release();
         m_vbo.release();
         m_vao.release();
 

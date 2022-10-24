@@ -23,11 +23,21 @@ MModelShape::MModelShape(int id, QObject *parent) : MGLModel(id, parent)
 {
     static float vertices[] = {
         // 位置              // 颜色
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶点
+         0.5f, 0.5f, 0.0f,  1.0f, 0.0f, 0.0f,    // 右下
+         0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
+        -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // 顶点
+        -0.5f, 0.5f, 0.0f,   1.0f, 0.0f, 0.0f    // 左上角
+    };
+    static unsigned int indices[] = {
+        // 注意索引从0开始!
+        // 此例的索引(0,1,2,3)就是顶点数组vertices的下标，
+        // 这样可以由下标代表顶点组合成矩形
+
+        0, 1, 3, // 第一个三角形
+        1, 2, 3  // 第二个三角形
     };
     setVertices(vertices, sizeof(vertices));
+    setIndexs(indices, sizeof(indices));
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fragment.glsl");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 6*sizeof(float));
@@ -36,7 +46,7 @@ MModelShape::MModelShape(int id, QObject *parent) : MGLModel(id, parent)
 
 void MModelShape::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
-    getShaderProgram()->setUniformValue("unColor", QVector3D(1.0, 0.0, 0.0));
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    //glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 }
 
