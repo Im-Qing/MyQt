@@ -3,70 +3,6 @@
 
 #include <QDebug>
 
-float normalVertices[] = {
-    // positions          // normals           // texture coords
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-     0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-     0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-    -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-     0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-     0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-    -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-    -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-};
-
-float vertices[] = {
-    // 位置              // 颜色
-     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
-    -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
-    -0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f,   // 左上
-     0.5f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 右上
-};
-
-//float vertices[] = {
-//    // 第一个三角形
-//    0.5f, 0.5f, 0.0f,   // 右上角
-//    0.5f, -0.5f, 0.0f,  // 右下角
-//    -0.5f, 0.5f, 0.0f,  // 左上角
-//    // 第二个三角形
-//    0.5f, -0.5f, 0.0f,  // 右下角
-//    -0.5f, -0.5f, 0.0f, // 左下角
-//    -0.5f, 0.5f, 0.0f   // 左上角
-//};
-
 MMainWindow::MMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MMainWindow)
@@ -79,6 +15,8 @@ MMainWindow::MMainWindow(QWidget *parent)
     //视图
     m_pGLWidget = new MGLWidget(m_pGLScene, this);
     ui->gridLayout->addWidget(m_pGLWidget);
+    //模型
+    m_pGLModelTest = new MModelTest(this);
 
     m_pTimer = new QTimer(this);
     //m_pTimer->start(50);
@@ -102,16 +40,9 @@ void MMainWindow::slot_timeout()
 
 void MMainWindow::slot_test1(bool)
 {
-    //模型
-    m_pGLModel = new MModelTest(1, m_pGLScene);
-    m_pGLModel->setVertices(vertices, sizeof(vertices));
-    m_pGLModel->addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
-    m_pGLModel->addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fragment.glsl");
-    m_pGLModel->addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 6*sizeof(float));
-    m_pGLModel->addAttributeBuffer("vColor", GL_FLOAT, 3*sizeof(float), 3, 6*sizeof(float));
-    //添加模型到场景
-    m_pGLScene->addModel(m_pGLModel);
-
+    //添加模型
+    m_pGLScene->addModel(m_pGLModelTest->getModel());
+    //刷新
     m_pGLWidget->update();
 }
 

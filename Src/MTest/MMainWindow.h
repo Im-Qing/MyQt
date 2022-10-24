@@ -32,6 +32,6 @@ private:
 
     MGLScene* m_pGLScene = nullptr;
     MGLWidget* m_pGLWidget = nullptr;
-    MModelTest* m_pGLModel = nullptr;
+    MModelTest* m_pGLModelTest = nullptr;
 };
 #endif // MMAINWINDOW_H

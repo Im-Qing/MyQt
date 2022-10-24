@@ -33,6 +33,7 @@ public:
 protected:
     //真正的模型绘制函数，需要继承重写
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos) = 0;
+    QOpenGLShaderProgram* getShaderProgram(){ return &m_shaderProgram; }
 private:
     void initialize();
     //由MGLWidget对象调用
