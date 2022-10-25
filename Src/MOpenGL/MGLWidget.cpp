@@ -25,9 +25,7 @@ MGLWidget::~MGLWidget()
 void MGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
+    glClearColor(51.0f/255, 51.0f/255, 99.0f/255, 1.0f);
 
     //初始化已添加的模型
     QList<MGLModel *> modelList = m_pScene->getAllModel();

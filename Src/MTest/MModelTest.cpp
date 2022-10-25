@@ -205,6 +205,10 @@ MModelTransform::MModelTransform(int id, QObject *parent): MGLModel(id, parent)
 
 void MModelTransform::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
+    glEnable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glDepthMask(GL_FALSE);      //禁用深度缓冲的写入
+
     glm::vec3 cubePositions[] = {
       glm::vec3( 0.0f,  0.0f,  0.0f),
       glm::vec3( 2.0f,  5.0f, -15.0f),
