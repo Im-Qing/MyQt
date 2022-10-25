@@ -14,14 +14,7 @@ MGLModel::MGLModel(int id, QObject *parent) : QObject(parent)
 
 MGLModel::~MGLModel()
 {
-    m_pScene->getGLWidget()->makeCurrent();
-    //释放纹理数据
-    QMapIterator<int, QOpenGLTexture*> iter(m_mapIndexToTextureData);
-    while (iter.hasNext())
-    {
-        iter.next();
-        delete iter.value();
-    }
+
 }
 
 void MGLModel::setName(const QString &name)

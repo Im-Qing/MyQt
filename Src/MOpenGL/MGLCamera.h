@@ -7,13 +7,7 @@
 #include <QMatrix4x4>
 #include <QVector3D>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-const float PI = 3.1415926;
-const float AngleToRadian = PI/180.0f;
+#include "MOpenGL.h"
 
 namespace NS_MOpenGL
 {
@@ -31,8 +25,6 @@ protected:
 signals:
     void sign_viewMatChanged(QMatrix4x4 viewMat);
     void sign_projectionMatChanged(QMatrix4x4 projectionMat);
-public slots:
-
 private:
     QWidget* m_pGLWidget = nullptr;
     float m_fov = 45.0;

@@ -13,6 +13,9 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+const float PI = 3.1415926;
+const float AngleToRadian = PI/180.0f;
+
 namespace NS_MOpenGL
 {
 struct MGLAttributeBufferPara

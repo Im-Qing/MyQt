@@ -36,4 +36,14 @@ protected:
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
 };
 
+//变换
+class MModelTransform : public MGLModel
+{
+    Q_OBJECT
+public:
+    MModelTransform(int id, QObject *parent = nullptr);
+protected:
+    virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
+};
+
 #endif // MMODELTEST_H
