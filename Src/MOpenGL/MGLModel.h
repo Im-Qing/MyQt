@@ -23,15 +23,16 @@ public:
     ~MGLModel();
 public:
     void setName(const QString& name);
-    void setVertices(float* vertices, int nSize);
-    void setIndexs(unsigned int* indexs, int nSize);
+    void setCurrentKey(int key){ m_currentKey = key; }
 
     int getId();
     QString getName();
     MGLScene *getScene();
 public:
-    void addAttributeBuffer (const QString& name, GLenum type, int offset, int tupleSize, int stride = 0);
     void addShaderFromSourceFile(QOpenGLShader::ShaderType type, const QString& fileName);
+    void addVertices(float* vertices, int nSize);
+    void addAttributeBuffer (const QString& name, GLenum type, int offset, int tupleSize, int stride = 0);
+    void addIndexs(unsigned int* indexs, int nSize);
     ///
     /// \brief addTextureFile
     /// \param index 纹理序号
@@ -40,37 +41,37 @@ public:
     ///
     void addTextureFile(int index, const QString& variableName, const QString& fileName);
 protected:
-    //真正的模型绘制函数，需要继承重写
+    //真正的绘制函数，需要继承重写
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos) = 0;
-    QOpenGLShaderProgram* getShaderProgram(){ return &m_shaderProgram; }
+    QOpenGLShaderProgram* getShaderProgram(int key);
+    void bind(int key);
+    void release(int key);
 private:
     void initialize();
     //由MGLWidget对象调用
     void paintGL(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
     void setScene(MGLScene* scene);
-    void bindTextures();
-    void releaseTextures();
 private:
-    MGLScene *m_pScene;
-
+    MGLScene *m_pScene;                     //关联的场景
     int m_id;                               //模型id
     QString m_name;                         //模型名称
     bool m_isInitializeFinished{false};     //是否初始化完成
-    float* m_pVertexBuffer = nullptr;       //模型顶点缓冲数据
-    int m_vertexBufferSize;                 //模型顶点缓冲数据大小
-    unsigned int* m_pIndexBuffer = nullptr;        //模型元素缓冲数据
-    int m_indexBufferSize;                         //模型元素缓冲数据大小
-    QMap<QOpenGLShader::ShaderType, QString> m_mapShaderTypeToShaderFile;       //着色器程序文件集合
-    QMap<QString, MGLAttributeBufferPara> m_mapNameToAttributeBufferPara;       //顶点数据buffer定义集合
-    QMap<int, QString> m_mapIndexToVariableName;                                //纹理变量名集合
-    QMap<int, QString> m_mapIndexToTextureFile;                                 //纹理文件集合
-    QMap<int, QOpenGLTexture*> m_mapIndexToTextureData;                         //纹理数据集合
 
-    //vao,vbo,shaderProgram
-    QOpenGLVertexArrayObject m_vao;
-    QOpenGLBuffer m_vbo;
-    QOpenGLBuffer m_ebo;
-    QOpenGLShaderProgram m_shaderProgram;
+    int m_currentKey{0};       //当前key，用于标识一组用于绘制同一个对象的数据（顶点数据、索引数据、着色器数据、纹理数据等）,默认为0
+    QMap<int, QMap<QOpenGLShader::ShaderType, QString>> m_mapKeyToShaderTypeToShaderFile;       //着色器程序文件集合
+    QMap<int, float*> m_mapKeyToVertexBuffer;               //模型顶点缓冲数据集合
+    QMap<int, int> m_mapKeyToVertexBufferSize;              //模型顶点缓冲数据大小集合
+    QMap<int, QMap<QString, MGLAttributeBufferPara>> m_mapKeyToNameToAttributeBufferPara;       //顶点数据buffer定义集合
+    QMap<int, unsigned int*> m_mapKeyToIndexBuffer;         //模型元素缓冲数据集合
+    QMap<int, int> m_mapKeyToIndexBufferSize;               //模型元素缓冲数据大小集合
+    QMap<int, QMap<int, QString>> m_mapKeyToIndexToVariableName;                                //纹理变量名集合
+    QMap<int, QMap<int, QString>> m_mapKeyToIndexToTextureFile;                                 //纹理文件集合
+    QMap<int, QMap<int, QOpenGLTexture*>> m_mapKeyToIndexToTextureData;                         //纹理数据集合
+    //shaderProgram,vao,vbo,ebo
+    QMap<int, QOpenGLShaderProgram*> m_mapKeyToShaderProgram;
+    QMap<int, QOpenGLVertexArrayObject*> m_mapKeyToVao;
+    QMap<int, QOpenGLBuffer> m_mapKeyToVbo;
+    QMap<int, QOpenGLBuffer> m_mapKeyToEbo;
 
     friend class MGLScene;
     friend class MGLWidget;

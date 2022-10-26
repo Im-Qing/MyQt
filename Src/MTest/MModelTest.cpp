@@ -8,7 +8,7 @@ MGLModel *MModelTest::getModel()
 {
     MGLModel *pModel = nullptr;
 
-    m_modelId = 4;
+    m_modelId = 3;
     switch (m_modelId)
     {
     case 1:
@@ -58,8 +58,8 @@ MModelShape::MModelShape(int id, QObject *parent) : MGLModel(id, parent)
         0,7,4,
         0,7,3
     };
-    setVertices(vertices, sizeof(vertices));
-    setIndexs(indices, sizeof(indices));
+    addVertices(vertices, sizeof(vertices));
+    addIndexs(indices, sizeof(indices));
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fragment.glsl");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 6*sizeof(float));
@@ -68,11 +68,13 @@ MModelShape::MModelShape(int id, QObject *parent) : MGLModel(id, parent)
 
 void MModelShape::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
+    int key = 0;
+    bind(key);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //glDepthMask(GL_FALSE);      //禁用深度缓冲的写入
 
-    QOpenGLShaderProgram* pShaderProgram = getShaderProgram();
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
 
     glm::mat4 modelMat = glm::mat4(1.0f); ;
     pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelMat));
@@ -81,6 +83,7 @@ void MModelShape::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D 
     pShaderProgram->setUniformValue("uUseTexture", false);
 
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    release(key);
 }
 
 
@@ -130,7 +133,7 @@ MModelTexture::MModelTexture(int id, QObject *parent): MGLModel(id, parent)
         -0.5f,  0.5f,  0.5f,  1.0f,  242.f/255,  204.f/255,  0.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,  1.0f,  242.f/255,  204.f/255,  0.0f, 1.0f
     };
-    setVertices(vertices, sizeof(vertices));
+    addVertices(vertices, sizeof(vertices));
     addTextureFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
     addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
@@ -142,11 +145,13 @@ MModelTexture::MModelTexture(int id, QObject *parent): MGLModel(id, parent)
 
 void MModelTexture::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
+    int key = 0;
+    bind(key);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //glDepthMask(GL_FALSE);      //禁用深度缓冲的写入
 
-    QOpenGLShaderProgram* pShaderProgram = getShaderProgram();
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
 
     glm::mat4 modelMat = glm::mat4(1.0f);
     pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelMat));
@@ -155,6 +160,7 @@ void MModelTexture::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3
     pShaderProgram->setUniformValue("uUseTexture", true);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
+    release(key);
 }
 
 
@@ -204,7 +210,7 @@ MModelTransform::MModelTransform(int id, QObject *parent): MGLModel(id, parent)
         -0.5f,  0.5f,  0.5f,  1.0f,  242.f/255,  204.f/255,  0.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,  1.0f,  242.f/255,  204.f/255,  0.0f, 1.0f
     };
-    setVertices(vertices, sizeof(vertices));
+    addVertices(vertices, sizeof(vertices));
     addTextureFile(0, "uTexture1", "://Res/Img/bubu.jpg");
     addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
@@ -216,6 +222,8 @@ MModelTransform::MModelTransform(int id, QObject *parent): MGLModel(id, parent)
 
 void MModelTransform::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
+    int key = 0;
+    bind(key);
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //glDepthMask(GL_FALSE);      //禁用深度缓冲的写入
@@ -233,7 +241,7 @@ void MModelTransform::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVecto
       glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-    QOpenGLShaderProgram* pShaderProgram = getShaderProgram();
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
 
     //设置uniform变量值
     pShaderProgram->setUniformValue("uViewMat", viewMat);
@@ -251,6 +259,7 @@ void MModelTransform::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVecto
         pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
+    release(key);
 }
 
 
@@ -300,7 +309,7 @@ MModelStencilTest::MModelStencilTest(int id, QObject *parent): MGLModel(id, pare
         -0.5f,  0.5f,  0.5f,  1.0f, 242.f/255, 204.f/255,  0.0f, 0.0f,
         -0.5f,  0.5f, -0.5f,  1.0f, 242.f/255, 204.f/255,  0.0f, 1.0f
     };
-    setVertices(vertices, sizeof(vertices));
+    addVertices(vertices, sizeof(vertices));
     addTextureFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
     addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
@@ -312,6 +321,8 @@ MModelStencilTest::MModelStencilTest(int id, QObject *parent): MGLModel(id, pare
 
 void MModelStencilTest::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
+    int key = 0;
+    bind(key);
     glm::vec3 cubePositions[] = {
       glm::vec3( 0.0f,  0.0f,  0.0f),
       glm::vec3( 2.0f,  5.0f, -15.0f),
@@ -324,7 +335,7 @@ void MModelStencilTest::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVec
       glm::vec3( 1.5f,  0.2f, -1.5f),
       glm::vec3(-1.3f,  1.0f, -1.5f)
     };
-    QOpenGLShaderProgram* pShaderProgram = getShaderProgram();
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
 
     //模板测试
     glEnable(GL_STENCIL_TEST);
@@ -372,4 +383,5 @@ void MModelStencilTest::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVec
     }
     glStencilMask(0xFF);
     glEnable(GL_DEPTH_TEST);
+    release(key);
 }
