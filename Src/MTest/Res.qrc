@@ -8,5 +8,7 @@
         <file>Res/Img/bubu.jpg</file>
         <file>Res/GLSL/blend.frag</file>
         <file>Res/GLSL/blend.vert</file>
+        <file>Res/Img/metal.png</file>
+        <file>Res/Img/blending_transparent_window.png</file>
     </qresource>
 </RCC>

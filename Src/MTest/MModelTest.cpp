@@ -468,8 +468,7 @@ MModelBlend::MModelBlend(int id, QObject *parent): MGLModel(id, parent)
     //绘制地板需要的数据
     setCurrentKey(1);
     addVertices(planeVertices, sizeof(planeVertices));
-    addTextureFile(2, "uTexture1", "://Res/Img/onetwo.jpg");
-    addTextureFile(3, "uTexture2", "://Res/Img/container2.png");
+    addTextureFile(2, "uTexture1", "://Res/Img/metal.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
@@ -477,8 +476,7 @@ MModelBlend::MModelBlend(int id, QObject *parent): MGLModel(id, parent)
     //绘制窗户需要的数据
     setCurrentKey(2);
     addVertices(transparentVertices, sizeof(transparentVertices));
-    addTextureFile(4, "uTexture1", "://Res/Img/onetwo.jpg");
-    addTextureFile(5, "uTexture2", "://Res/Img/container2.png");
+    addTextureFile(3, "uTexture1", "://Res/Img/blending_transparent_window.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
@@ -488,16 +486,8 @@ MModelBlend::MModelBlend(int id, QObject *parent): MGLModel(id, parent)
 void MModelBlend::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
 {
     glm::vec3 cubePositions[] = {
-      glm::vec3( 0.0f,  0.0f,  0.0f),
-      glm::vec3( 2.0f,  5.0f, -15.0f),
-      glm::vec3(-1.5f, -2.2f, -2.5f),
-      glm::vec3(-3.8f, -2.0f, -12.3f),
-      glm::vec3( 2.4f, -0.4f, -3.5f),
-      glm::vec3(-1.7f,  3.0f, -7.5f),
-      glm::vec3( 1.3f, -2.0f, -2.5f),
-      glm::vec3( 1.5f,  2.0f, -2.5f),
-      glm::vec3( 1.5f,  0.2f, -1.5f),
-      glm::vec3(-1.3f,  1.0f, -1.5f)
+      glm::vec3( -1.0f, 0.0f, -1.0f),
+      glm::vec3( 2.0f, 0.0f, 0.0f)
     };
     std::vector<glm::vec3> windows
     {
@@ -510,25 +500,27 @@ void MModelBlend::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D 
 
     //深度测试
     glEnable(GL_DEPTH_TEST);
+    //开启混合
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //清除缓冲
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    int key = 1;
-
     //绘制箱子
+    int key = 0;
     bind(key);
     QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
     //设置uniform变量值
     pShaderProgram->setUniformValue("uViewMat", viewMat);
     pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
-    for(int i = 0; i<10; i++)
+    for(int i = 0; i<2; i++)
     {
         //变换矩阵，顺序为：缩放->旋转->位移
         glm::mat4 modelTranMat = glm::mat4(1.0f);
         modelTranMat = glm::translate(modelTranMat, cubePositions[i]);                   //平移
-        float angle = 20.0f * i;
-        modelTranMat = glm::rotate(modelTranMat, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));    //旋转(逆时针为正)
-        modelTranMat = glm::scale(modelTranMat, glm::vec3(1.0, 1.0, 1.0));                          //缩放
+//        float angle = 20.0f * i;
+//        modelTranMat = glm::rotate(modelTranMat, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));    //旋转(逆时针为正)
+//        modelTranMat = glm::scale(modelTranMat, glm::vec3(1.0, 1.0, 1.0));                          //缩放
         pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
@@ -548,4 +540,19 @@ void MModelBlend::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D 
     release(key);
 
     //绘制窗户
+    key = 2;
+    bind(key);
+    pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    for(int i = 0; i<5; i++)
+    {
+        //变换矩阵，顺序为：缩放->旋转->位移
+        glm::mat4 modelTranMat = glm::mat4(1.0f);
+        modelTranMat = glm::translate(modelTranMat, windows[i]);                   //平移
+        pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
+    release(key);
 }
