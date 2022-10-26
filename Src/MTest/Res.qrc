@@ -6,5 +6,7 @@
         <file>Res/Img/container2.png</file>
         <file>Res/Img/onetwo.jpg</file>
         <file>Res/Img/bubu.jpg</file>
+        <file>Res/GLSL/blend.frag</file>
+        <file>Res/GLSL/blend.vert</file>
     </qresource>
 </RCC>

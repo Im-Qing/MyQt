@@ -111,13 +111,14 @@ void MGLModel::initialize()
     MGLWidget* pGLWidget = m_pScene->getGLWidget();
     if(!m_isInitializeFinished && pGLWidget && pGLWidget->context())
     {
-        //着色器程序链接
+        //初始化着色器、顶点、纹理等数据
+        QMapIterator<int, QMap<QOpenGLShader::ShaderType, QString>> iter(m_mapKeyToShaderTypeToShaderFile);
+        while (iter.hasNext())
         {
-            QMapIterator<int, QMap<QOpenGLShader::ShaderType, QString>> iter(m_mapKeyToShaderTypeToShaderFile);
-            while (iter.hasNext())
+            iter.next();
+            int key = iter.key();
+            //着色器程序链接
             {
-                iter.next();
-                int key = iter.key();
                 m_mapKeyToShaderProgram[key] = new QOpenGLShaderProgram(this);
                 m_mapKeyToShaderProgram[key]->create();
                 m_mapKeyToShaderProgram[key]->bind();
@@ -129,14 +130,8 @@ void MGLModel::initialize()
                 }
                 m_mapKeyToShaderProgram[key]->link();
             }
-        }
-        //顶点缓冲数据和索引缓冲数据
-        {
-            QMapIterator<int, float*> iter(m_mapKeyToVertexBuffer);
-            while (iter.hasNext())
+            //顶点缓冲数据和索引缓冲数据
             {
-                iter.next();
-                int key = iter.key();
                 //vao
                 m_mapKeyToVao[key] = new QOpenGLVertexArrayObject(this);
                 m_mapKeyToVao[key]->create();
@@ -145,12 +140,12 @@ void MGLModel::initialize()
                 m_mapKeyToVbo[key] = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
                 m_mapKeyToVbo[key].create();
                 m_mapKeyToVbo[key].bind();
-                if(!iter.value())
+                if(!m_mapKeyToVertexBuffer[key])
                 {
                     qDebug()<<"vertexBuffer is nullptr, key = " << key;
                     continue;
                 }
-                m_mapKeyToVbo[key].allocate(iter.value(), m_mapKeyToVertexBufferSize[key]);
+                m_mapKeyToVbo[key].allocate(m_mapKeyToVertexBuffer[key], m_mapKeyToVertexBufferSize[key]);
                 //ebo
                 if(m_mapKeyToIndexBuffer.contains(key) && m_mapKeyToIndexBuffer[key])
                 {
@@ -161,36 +156,21 @@ void MGLModel::initialize()
                     m_mapKeyToEbo[key].allocate(m_mapKeyToIndexBuffer[key], m_mapKeyToIndexBufferSize[key]);
                 }
             }
-        }
-        //顶点数据规则
-        {
-            QMapIterator<int, QMap<QString, MGLAttributeBufferPara>> iter(m_mapKeyToNameToAttributeBufferPara);
-            while (iter.hasNext())
+            //顶点数据规则
             {
-                iter.next();
-                int key = iter.key();
-                if(m_mapKeyToShaderProgram.contains(key))
+                QMapIterator<QString, MGLAttributeBufferPara> iter1(m_mapKeyToNameToAttributeBufferPara[key]);
+                while (iter1.hasNext())
                 {
-                    QMapIterator<QString, MGLAttributeBufferPara> iter1(iter.value());
-                    while (iter1.hasNext())
-                    {
-                        iter1.next();
-                        QString name = iter1.key();
-                        MGLAttributeBufferPara para = iter1.value();
-                        m_mapKeyToShaderProgram[key]->setAttributeBuffer(name.toStdString().c_str(), para.type, para.offset, para.tupleSize, para.stride);
-                        m_mapKeyToShaderProgram[key]->enableAttributeArray(name.toStdString().c_str());
-                    }
+                    iter1.next();
+                    QString name = iter1.key();
+                    MGLAttributeBufferPara para = iter1.value();
+                    m_mapKeyToShaderProgram[key]->setAttributeBuffer(name.toStdString().c_str(), para.type, para.offset, para.tupleSize, para.stride);
+                    m_mapKeyToShaderProgram[key]->enableAttributeArray(name.toStdString().c_str());
                 }
             }
-        }
-        //纹理数据
-        {
-            QMapIterator<int, QMap<int, QString>> iter(m_mapKeyToIndexToTextureFile);
-            while (iter.hasNext())
+            //纹理数据
             {
-                iter.next();
-                int key = iter.key();
-                QMapIterator<int, QString> iter1(iter.value());
+                QMapIterator<int, QString> iter1(m_mapKeyToIndexToTextureFile[key]);
                 while (iter1.hasNext())
                 {
                     iter1.next();
@@ -199,23 +179,11 @@ void MGLModel::initialize()
                     m_mapKeyToIndexToTextureData[key][index] = new QOpenGLTexture(QImage(textureFile).mirrored());
                 }
             }
-        }
-        //release
-        {
-            QMapIterator<int, QOpenGLShaderProgram*> iter(m_mapKeyToShaderProgram);
-            while (iter.hasNext())
+            //release
             {
-                iter.next();
-                int key = iter.key();
-                if(m_mapKeyToVbo.contains(key))
-                {
-                    m_mapKeyToVbo[key].release();
-                }
-                if(m_mapKeyToVao.contains(key))
-                {
-                    m_mapKeyToVao[key]->release();
-                }
-                iter.value()->release();
+                m_mapKeyToVbo[key].release();
+                m_mapKeyToVao[key]->release();
+                m_mapKeyToShaderProgram[key]->release();
             }
         }
         //初始化gl函数库
