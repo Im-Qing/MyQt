@@ -10,5 +10,15 @@
         <file>Res/GLSL/blend.vert</file>
         <file>Res/Img/metal.png</file>
         <file>Res/Img/blending_transparent_window.png</file>
+        <file>Res/GLSL/skybox.frag</file>
+        <file>Res/GLSL/skybox.vert</file>
+        <file>Res/Img/skybox/back.jpg</file>
+        <file>Res/Img/skybox/bottom.jpg</file>
+        <file>Res/Img/skybox/front.jpg</file>
+        <file>Res/Img/skybox/left.jpg</file>
+        <file>Res/Img/skybox/right.jpg</file>
+        <file>Res/Img/skybox/top.jpg</file>
+        <file>Res/GLSL/fbo.frag</file>
+        <file>Res/GLSL/fbo.vert</file>
     </qresource>
 </RCC>

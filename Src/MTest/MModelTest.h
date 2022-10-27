@@ -66,4 +66,14 @@ protected:
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
 };
 
+//帧缓冲
+class MModelFBO : public MGLModel
+{
+    Q_OBJECT
+public:
+    MModelFBO(int id, QObject *parent = nullptr);
+protected:
+    virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
+};
+
 #endif // MMODELTEST_H

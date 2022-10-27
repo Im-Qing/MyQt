@@ -8,7 +8,7 @@ MGLModel *MModelTest::getModel()
 {
     MGLModel *pModel = nullptr;
 
-    m_modelId = 5;
+    m_modelId = 6;
     switch (m_modelId)
     {
     case 1:
@@ -25,6 +25,9 @@ MGLModel *MModelTest::getModel()
         break;
     case 5:
         pModel = new MModelBlend(m_modelId, this);
+        break;
+    case 6:
+        pModel = new MModelFBO(m_modelId, this);
         break;
     }
 
@@ -554,5 +557,224 @@ void MModelBlend::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D 
         pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
+    release(key);
+}
+
+
+MModelFBO::MModelFBO(int id, QObject *parent): MGLModel(id, parent)
+{
+    static float cubeVertices[] = {
+        // positions          // texture Coords
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+    static float planeVertices[] = {
+        // positions          // texture Coords
+        5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+        -5.0f, -0.5f,  5.0f,  0.0f, 0.0f,
+        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+
+        5.0f, -0.5f,  5.0f,  2.0f, 0.0f,
+        -5.0f, -0.5f, -5.0f,  0.0f, 2.0f,
+        5.0f, -0.5f, -5.0f,  2.0f, 2.0f
+    };
+    static float quadVertices[] = {
+        // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+        1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        1.0f, -1.0f,  1.0f, 0.0f,
+        1.0f,  1.0f,  1.0f, 1.0f
+    };
+    static float skyboxVertices[] = {
+        // positions
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+    //绘制箱子需要的数据
+    setCurrentKey(0);
+    addVertices(cubeVertices, sizeof(cubeVertices));
+    addTextureFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
+    addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
+    addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
+    addAttributeBuffer("vTexCoord", GL_FLOAT, 3*sizeof(float), 2, 5*sizeof(float));
+    //绘制地板需要的数据
+    setCurrentKey(1);
+    addVertices(planeVertices, sizeof(planeVertices));
+    addTextureFile(2, "uTexture1", "://Res/Img/metal.png");
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
+    addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
+    addAttributeBuffer("vTexCoord", GL_FLOAT, 3*sizeof(float), 2, 5*sizeof(float));
+    //绘制四边形需要的数据
+    setCurrentKey(2);
+    addVertices(quadVertices, sizeof(quadVertices));
+    addTextureFile(3, "uTexture1", "://Res/Img/blending_transparent_window.png");
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/fbo.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fbo.frag");
+    addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 2, 4*sizeof(float));
+    addAttributeBuffer("vTexCoord", GL_FLOAT, 2*sizeof(float), 2, 4*sizeof(float));
+    //绘制天空盒需要的数据
+    setCurrentKey(3);
+    addVertices(skyboxVertices, sizeof(skyboxVertices));
+    addTextureFile(3, "uTexture1", "://Res/Img/blending_transparent_window.png");
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/skybox.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/skybox.frag");
+    addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 3*sizeof(float));
+}
+
+void MModelFBO::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
+{
+    glm::vec3 cubePositions[] = {
+      glm::vec3( -1.0f, 0.0f, -1.0f),
+      glm::vec3( 2.0f, 0.0f, 0.0f)
+    };
+    std::vector<glm::vec3> windows
+    {
+        glm::vec3(-1.5f, 0.0f, -0.48f),
+        glm::vec3( 1.5f, 0.0f, 0.51f),
+        glm::vec3( 0.0f, 0.0f, 0.7f),
+        glm::vec3(-0.3f, 0.0f, -2.3f),
+        glm::vec3( 0.5f, 0.0f, -0.6f)
+    };
+
+    //深度测试
+    glEnable(GL_DEPTH_TEST);
+    //开启混合
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //启用自定义帧缓冲
+    bindFbo();
+    //清除缓冲
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //绘制箱子
+    int key = 0;
+    bind(key);
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    for(int i = 0; i<2; i++)
+    {
+        //变换矩阵，顺序为：缩放->旋转->位移
+        glm::mat4 modelTranMat = glm::mat4(1.0f);
+        modelTranMat = glm::translate(modelTranMat, cubePositions[i]);                   //平移
+//        float angle = 20.0f * i;
+//        modelTranMat = glm::rotate(modelTranMat, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));    //旋转(逆时针为正)
+//        modelTranMat = glm::scale(modelTranMat, glm::vec3(1.0, 1.0, 1.0));                          //缩放
+        pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+    release(key);
+    //绘制地板
+    key = 1;
+    bind(key);
+    pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    //变换矩阵，顺序为：缩放->旋转->位移
+    glm::mat4 modelTranMat = glm::mat4(1.0f);
+    pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    release(key);
+    //禁用自定义帧缓冲
+    releaseFbo();
+
+    //绘制四边形，将自定义帧缓冲里的数据绘制到四边形上
+    key = 2;
+    bind(key);
+    bindFboTexture(key, "uTexture1");
+    pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    //变换矩阵，顺序为：缩放->旋转->位移
+    pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+    glDrawArrays(GL_TRIANGLES, 0, 6);
     release(key);
 }

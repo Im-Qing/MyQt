@@ -6,6 +6,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLTexture>
+#include <QOpenGLFramebufferObject>
 
 #include "MOpenGL.h"
 
@@ -43,9 +44,19 @@ public:
 protected:
     //真正的绘制函数，需要继承重写
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos) = 0;
+    void resizeGL(int w, int h);
     QOpenGLShaderProgram* getShaderProgram(int key);
     void bind(int key);
     void release(int key);
+    void bindFbo(int key = 0);
+    void releaseFbo(int key = 0);
+    ///
+    /// \brief bindFboTexture
+    /// \param shaderProgramkey 着色器程序的key值
+    /// \param variableName 纹理在着色器中对应的变量名
+    /// \param key fbo的key值
+    ///
+    void bindFboTexture(int shaderProgramkey, const QString& variableName, int key = 0);
 private:
     void initialize();
     //由MGLWidget对象调用
@@ -67,11 +78,12 @@ private:
     QMap<int, QMap<int, QString>> m_mapKeyToIndexToVariableName;                                //纹理变量名集合
     QMap<int, QMap<int, QString>> m_mapKeyToIndexToTextureFile;                                 //纹理文件集合
     QMap<int, QMap<int, QOpenGLTexture*>> m_mapKeyToIndexToTextureData;                         //纹理数据集合
-    //shaderProgram,vao,vbo,ebo
+    //shaderProgram,vao,vbo,ebo,fbo
     QMap<int, QOpenGLShaderProgram*> m_mapKeyToShaderProgram;
     QMap<int, QOpenGLVertexArrayObject*> m_mapKeyToVao;
     QMap<int, QOpenGLBuffer> m_mapKeyToVbo;
     QMap<int, QOpenGLBuffer> m_mapKeyToEbo;
+    QOpenGLFramebufferObject* m_pFbo;
 
     friend class MGLScene;
     friend class MGLWidget;

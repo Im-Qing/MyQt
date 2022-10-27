@@ -48,6 +48,12 @@ void MGLWidget::paintGL()
 void MGLWidget::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);  //这里是显示窗体，上面有截取，这里才有显示。不然窗口不会显示任何内容
+    //通知模型窗口尺寸发生变化
+    QList<MGLModel *> modelList = m_pScene->getAllModel();
+    for(auto pModel : modelList)
+    {
+        pModel->resizeGL(w, h);
+    }
 }
 
 void MGLWidget::slot_cameraProjectionChanged(QMatrix4x4 projectionMat)

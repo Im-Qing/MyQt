@@ -69,6 +69,12 @@ void MGLModel::addTextureFile(int index, const QString& variableName, const QStr
     m_mapKeyToIndexToTextureFile[m_currentKey][index] = fileName;
 }
 
+void MGLModel::resizeGL(int w, int h)
+{
+    delete m_pFbo;
+    m_pFbo = new QOpenGLFramebufferObject(w,h,QOpenGLFramebufferObject::Depth);
+}
+
 QOpenGLShaderProgram *MGLModel::getShaderProgram(int key)
 {
     if(m_mapKeyToShaderProgram.contains(key))
@@ -103,6 +109,27 @@ void MGLModel::release(int key)
     {
         iter.next();
         iter.value()->release();
+    }
+}
+
+void MGLModel::bindFbo(int key)
+{
+    //m_pFbo->takeTexture();
+    m_pFbo->bind();
+}
+
+void MGLModel::releaseFbo(int key)
+{
+    m_pFbo->release();
+}
+
+void MGLModel::bindFboTexture(int shaderProgramkey, const QString &variableName, int key)
+{
+    if(m_mapKeyToShaderProgram.contains(shaderProgramkey))
+    {
+        m_mapKeyToShaderProgram[key]->setUniformValue(variableName.toStdString().c_str(), 0);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,m_pFbo->texture());
     }
 }
 
@@ -167,6 +194,10 @@ void MGLModel::initialize()
                     m_mapKeyToShaderProgram[key]->setAttributeBuffer(name.toStdString().c_str(), para.type, para.offset, para.tupleSize, para.stride);
                     m_mapKeyToShaderProgram[key]->enableAttributeArray(name.toStdString().c_str());
                 }
+            }
+            //帧缓冲
+            {
+                m_pFbo = new QOpenGLFramebufferObject(pGLWidget->size(),QOpenGLFramebufferObject::Depth);
             }
             //纹理数据
             {
