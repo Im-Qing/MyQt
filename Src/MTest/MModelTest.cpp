@@ -140,8 +140,8 @@ MModelTexture::MModelTexture(int id, QObject *parent): MGLModel(id, parent)
         -0.5f,  0.5f, -0.5f,  1.0f,  242.f/255,  204.f/255,  0.0f, 1.0f
     };
     addVertices(vertices, sizeof(vertices));
-    addTextureFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
-    addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
+    addTexture2DFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
+    addTexture2DFile(1, "uTexture2", "://Res/Img/container2.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fragment.glsl");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 8*sizeof(float));
@@ -217,8 +217,8 @@ MModelTransform::MModelTransform(int id, QObject *parent): MGLModel(id, parent)
         -0.5f,  0.5f, -0.5f,  1.0f,  242.f/255,  204.f/255,  0.0f, 1.0f
     };
     addVertices(vertices, sizeof(vertices));
-    addTextureFile(0, "uTexture1", "://Res/Img/bubu.jpg");
-    addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
+    addTexture2DFile(0, "uTexture1", "://Res/Img/bubu.jpg");
+    addTexture2DFile(1, "uTexture2", "://Res/Img/container2.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fragment.glsl");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 8*sizeof(float));
@@ -316,8 +316,8 @@ MModelStencilTest::MModelStencilTest(int id, QObject *parent): MGLModel(id, pare
         -0.5f,  0.5f, -0.5f,  1.0f, 242.f/255, 204.f/255,  0.0f, 1.0f
     };
     addVertices(vertices, sizeof(vertices));
-    addTextureFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
-    addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
+    addTexture2DFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
+    addTexture2DFile(1, "uTexture2", "://Res/Img/container2.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/vertex.glsl");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fragment.glsl");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 8*sizeof(float));
@@ -462,8 +462,8 @@ MModelBlend::MModelBlend(int id, QObject *parent): MGLModel(id, parent)
     //绘制箱子需要的数据
     setCurrentKey(0);
     addVertices(cubeVertices, sizeof(cubeVertices));
-    addTextureFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
-    addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
+    addTexture2DFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
+    addTexture2DFile(1, "uTexture2", "://Res/Img/container2.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
@@ -471,7 +471,7 @@ MModelBlend::MModelBlend(int id, QObject *parent): MGLModel(id, parent)
     //绘制地板需要的数据
     setCurrentKey(1);
     addVertices(planeVertices, sizeof(planeVertices));
-    addTextureFile(2, "uTexture1", "://Res/Img/metal.png");
+    addTexture2DFile(2, "uTexture1", "://Res/Img/metal.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
@@ -479,7 +479,7 @@ MModelBlend::MModelBlend(int id, QObject *parent): MGLModel(id, parent)
     //绘制窗户需要的数据
     setCurrentKey(2);
     addVertices(transparentVertices, sizeof(transparentVertices));
-    addTextureFile(3, "uTexture1", "://Res/Img/blending_transparent_window.png");
+    addTexture2DFile(3, "uTexture1", "://Res/Img/blending_transparent_window.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
@@ -672,11 +672,19 @@ MModelFBO::MModelFBO(int id, QObject *parent): MGLModel(id, parent)
         -1.0f, -1.0f,  1.0f,
          1.0f, -1.0f,  1.0f
     };
+    static QStringList skyBoxTexturePaths{
+        "://Res/Img/skybox/right.jpg",
+        "://Res/Img/skybox/left.jpg",
+        "://Res/Img/skybox/top.jpg",
+        "://Res/Img/skybox/bottom.jpg",
+        "://Res/Img/skybox/front.jpg",
+        "://Res/Img/skybox/back.jpg",
+    };
     //绘制箱子需要的数据
     setCurrentKey(0);
     addVertices(cubeVertices, sizeof(cubeVertices));
-    addTextureFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
-    addTextureFile(1, "uTexture2", "://Res/Img/container2.png");
+    addTexture2DFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
+    addTexture2DFile(1, "uTexture2", "://Res/Img/container2.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
@@ -684,7 +692,7 @@ MModelFBO::MModelFBO(int id, QObject *parent): MGLModel(id, parent)
     //绘制地板需要的数据
     setCurrentKey(1);
     addVertices(planeVertices, sizeof(planeVertices));
-    addTextureFile(2, "uTexture1", "://Res/Img/metal.png");
+    addTexture2DFile(2, "uTexture1", "://Res/Img/metal.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
@@ -692,7 +700,7 @@ MModelFBO::MModelFBO(int id, QObject *parent): MGLModel(id, parent)
     //绘制四边形需要的数据
     setCurrentKey(2);
     addVertices(quadVertices, sizeof(quadVertices));
-    addTextureFile(3, "uTexture1", "://Res/Img/blending_transparent_window.png");
+    addTexture2DFile(3, "uTexture1", "://Res/Img/blending_transparent_window.png");
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/fbo.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fbo.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 2, 4*sizeof(float));
@@ -700,7 +708,7 @@ MModelFBO::MModelFBO(int id, QObject *parent): MGLModel(id, parent)
     //绘制天空盒需要的数据
     setCurrentKey(3);
     addVertices(skyboxVertices, sizeof(skyboxVertices));
-    addTextureFile(3, "uTexture1", "://Res/Img/blending_transparent_window.png");
+    addSkyBoxTextureFile(3, "uTexture1", skyBoxTexturePaths);
     addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/skybox.vert");
     addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/skybox.frag");
     addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 3*sizeof(float));
@@ -723,12 +731,6 @@ void MModelFBO::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D ca
 
     //深度测试
     glEnable(GL_DEPTH_TEST);
-    //开启混合
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    //启用自定义帧缓冲
-    bindFbo();
     //清除缓冲
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //绘制箱子
@@ -749,32 +751,5 @@ void MModelFBO::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D ca
         pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
-    release(key);
-    //绘制地板
-    key = 1;
-    bind(key);
-    pShaderProgram = getShaderProgram(key);
-    //设置uniform变量值
-    pShaderProgram->setUniformValue("uViewMat", viewMat);
-    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
-    //变换矩阵，顺序为：缩放->旋转->位移
-    glm::mat4 modelTranMat = glm::mat4(1.0f);
-    pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    release(key);
-    //禁用自定义帧缓冲
-    releaseFbo();
-
-    //绘制四边形，将自定义帧缓冲里的数据绘制到四边形上
-    key = 2;
-    bind(key);
-    bindFboTexture(key, "uTexture1");
-    pShaderProgram = getShaderProgram(key);
-    //设置uniform变量值
-    pShaderProgram->setUniformValue("uViewMat", viewMat);
-    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
-    //变换矩阵，顺序为：缩放->旋转->位移
-    pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
-    glDrawArrays(GL_TRIANGLES, 0, 6);
     release(key);
 }

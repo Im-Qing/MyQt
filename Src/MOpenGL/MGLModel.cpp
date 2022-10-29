@@ -63,10 +63,40 @@ void MGLModel::addIndexs(unsigned int* indexs, int nSize)
     m_mapKeyToIndexBufferSize[m_currentKey] = nSize;
 }
 
-void MGLModel::addTextureFile(int index, const QString& variableName, const QString &fileName)
+void MGLModel::addTexture2DFile(int index, const QString& variableName, const QString &fileName)
 {
     m_mapKeyToIndexToVariableName[m_currentKey][index] = variableName;
     m_mapKeyToIndexToTextureFile[m_currentKey][index] = fileName;
+}
+
+void MGLModel::addSkyBoxTextureFile(int index, const QString &variableName, const QStringList &fileNameList)
+{
+    m_mapKeyToIndexToVariableName[m_currentKey][index] = variableName;
+    m_mapKeyToIndexToSkyBoxTextureFile[m_currentKey][index] = fileNameList;
+
+    QOpenGLTexture *pTexture=new QOpenGLTexture(QOpenGLTexture::TargetCubeMap);
+    QImage posX = QImage(fileNameList[0]).convertToFormat(QImage::Format_RGB888); //Right，默认读取的纹理为32位RGB，不符合CubeMap的要求，必须转为24位RGB。
+    QImage negX = QImage(fileNameList[1]).convertToFormat(QImage::Format_RGB888); //Left
+    QImage posY = QImage(fileNameList[2]).convertToFormat(QImage::Format_RGB888); //Top
+    QImage negY = QImage(fileNameList[3]).convertToFormat(QImage::Format_RGB888); //Bottom
+    QImage posZ = QImage(fileNameList[4]).convertToFormat(QImage::Format_RGB888); //Front
+    QImage negZ = QImage(fileNameList[5]).convertToFormat(QImage::Format_RGB888); //Back
+    pTexture->setSize(posX.width(),posX.width(),posX.depth());
+    pTexture->setFormat(QOpenGLTexture::RGBFormat);
+    pTexture->allocateStorage(QOpenGLTexture::RGB,QOpenGLTexture::UInt8);
+    //不明白为什么这几个值跟文档的不一样，怎么就差了2，文档斜的差1的
+    pTexture->setData(0, 0, QOpenGLTexture::CubeMapPositiveX, QOpenGLTexture::RGB, QOpenGLTexture::UInt8, (const void*)posX.bits());
+    pTexture->setData(0, 0, QOpenGLTexture::CubeMapPositiveY, QOpenGLTexture::RGB, QOpenGLTexture::UInt8, (const void*)posY.bits());
+    pTexture->setData(0, 0, QOpenGLTexture::CubeMapPositiveZ, QOpenGLTexture::RGB, QOpenGLTexture::UInt8, (const void*)posZ.bits());
+    pTexture->setData(0, 0, QOpenGLTexture::CubeMapNegativeX, QOpenGLTexture::RGB, QOpenGLTexture::UInt8, (const void*)negX.bits());
+    pTexture->setData(0, 0, QOpenGLTexture::CubeMapNegativeY, QOpenGLTexture::RGB, QOpenGLTexture::UInt8, (const void*)negY.bits());
+    pTexture->setData(0, 0, QOpenGLTexture::CubeMapNegativeZ, QOpenGLTexture::RGB, QOpenGLTexture::UInt8, (const void*)negZ.bits());
+    pTexture->setMinificationFilter(QOpenGLTexture::Linear);   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    pTexture->setMagnificationFilter(QOpenGLTexture::Linear);
+    pTexture->setWrapMode(QOpenGLTexture::DirectionS, QOpenGLTexture::ClampToEdge);  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    pTexture->setWrapMode(QOpenGLTexture::DirectionT, QOpenGLTexture::ClampToEdge);  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // pTexture->setWrapMode(QOpenGLTexture::DirectionR, QOpenGLTexture::ClampToEdge);
+    m_mapKeyToIndexToTextureData[m_currentKey][index] = pTexture;
 }
 
 void MGLModel::resizeGL(int w, int h)
@@ -89,7 +119,7 @@ void MGLModel::bind(int key)
     m_mapKeyToVao[key]->bind();
     m_mapKeyToShaderProgram[key]->bind();
     //纹理
-    QMapIterator<int, QString> iter(m_mapKeyToIndexToTextureFile[key]);
+    QMapIterator<int, QString> iter(m_mapKeyToIndexToVariableName[key]);
     while (iter.hasNext())
     {
         iter.next();
@@ -200,6 +230,7 @@ void MGLModel::initialize()
                 m_pFbo = new QOpenGLFramebufferObject(pGLWidget->size(),QOpenGLFramebufferObject::Depth);
             }
             //纹理数据
+            if(m_mapKeyToIndexToTextureFile.contains(key))
             {
                 QMapIterator<int, QString> iter1(m_mapKeyToIndexToTextureFile[key]);
                 while (iter1.hasNext())

@@ -35,12 +35,19 @@ public:
     void addAttributeBuffer (const QString& name, GLenum type, int offset, int tupleSize, int stride = 0);
     void addIndexs(unsigned int* indexs, int nSize);
     ///
-    /// \brief addTextureFile
+    /// \brief addTexture2DFile
     /// \param index 纹理序号
     /// \param variableName 纹理在着色器中对应的变量名
     /// \param fileName
     ///
-    void addTextureFile(int index, const QString& variableName, const QString& fileName);
+    void addTexture2DFile(int index, const QString& variableName, const QString& fileName);
+    ///
+    /// \brief addSkyBoxTexture
+    /// \param index
+    /// \param variableName
+    /// \param fileNameList 按Right，Left，Top，Bottom，Front，Back顺序赋值
+    ///
+    void addSkyBoxTextureFile(int index, const QString& variableName, const QStringList& fileNameList);
 protected:
     //真正的绘制函数，需要继承重写
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos) = 0;
@@ -77,6 +84,7 @@ private:
     QMap<int, int> m_mapKeyToIndexBufferSize;               //模型元素缓冲数据大小集合
     QMap<int, QMap<int, QString>> m_mapKeyToIndexToVariableName;                                //纹理变量名集合
     QMap<int, QMap<int, QString>> m_mapKeyToIndexToTextureFile;                                 //纹理文件集合
+    QMap<int, QMap<int, QStringList>> m_mapKeyToIndexToSkyBoxTextureFile;                       //天空盒纹理文件集合
     QMap<int, QMap<int, QOpenGLTexture*>> m_mapKeyToIndexToTextureData;                         //纹理数据集合
     //shaderProgram,vao,vbo,ebo,fbo
     QMap<int, QOpenGLShaderProgram*> m_mapKeyToShaderProgram;
