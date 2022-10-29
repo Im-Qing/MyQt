@@ -1,10 +1,8 @@
-varying vec3 oColor;
-varying vec2 oTexCoord;
+varying vec3 oTexCoord;
 
-uniform bool uUseTexture;
-uniform sampler2D uTexture1;
+uniform samplerCube uSkyboxTexture;
 
 void main(void)
 {
-    gl_FragColor = texture2D(uTexture1, oTexCoord);
+    gl_FragColor = textureCube(uSkyboxTexture, oTexCoord);
 }

@@ -76,4 +76,14 @@ protected:
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
 };
 
+//天空盒
+class MModelSkyBox : public MGLModel
+{
+    Q_OBJECT
+public:
+    MModelSkyBox(int id, QObject *parent = nullptr);
+protected:
+    virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
+};
+
 #endif // MMODELTEST_H
