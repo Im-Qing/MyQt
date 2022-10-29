@@ -63,6 +63,28 @@ void MGLModel::addIndexs(unsigned int* indexs, int nSize)
     m_mapKeyToIndexBufferSize[m_currentKey] = nSize;
 }
 
+void MGLModel::addInstanceVertices(void *instanceVertices, int nSize)
+{
+    m_mapKeyToInstanceVertexBuffer[m_currentKey] = instanceVertices;
+    m_mapKeyToInstanceVertexBufferSize[m_currentKey] = nSize;
+}
+
+void MGLModel::addInstanceAttributeBuffer(const QString &name, GLenum type, int offset, int tupleSize, int stride)
+{
+    MGLAttributeBufferPara attributeBufferPara;
+    attributeBufferPara.name = name;
+    attributeBufferPara.type = type;
+    attributeBufferPara.offset = offset;
+    attributeBufferPara.tupleSize = tupleSize;
+    attributeBufferPara.stride = stride;
+    m_mapKeyToNameToInstanceAttributeBufferPara[m_currentKey][name] = attributeBufferPara;
+}
+
+void MGLModel::addVertexAttribDivisor(const QString &name, GLuint divisor)
+{
+    m_mapKeyToNameToInstanceAttribDivisor[m_currentKey][name] = divisor;
+}
+
 void MGLModel::addTexture2DFile(int index, const QString& variableName, const QString &fileName)
 {
     m_mapKeyToIndexToVariableName[m_currentKey][index] = variableName;
@@ -144,6 +166,8 @@ void MGLModel::initialize()
     MGLWidget* pGLWidget = m_pScene->getGLWidget();
     if(!m_isInitializeFinished && pGLWidget && pGLWidget->context())
     {
+        //初始化gl函数库
+        initializeOpenGLFunctions();
         //初始化着色器、顶点数据
         QMapIterator<int, QMap<QOpenGLShader::ShaderType, QString>> iter(m_mapKeyToShaderTypeToShaderFile);
         while (iter.hasNext())
@@ -163,7 +187,7 @@ void MGLModel::initialize()
                 }
                 m_mapKeyToShaderProgram[key]->link();
             }
-            //顶点缓冲数据和索引缓冲数据
+            //顶点缓冲数据、索引缓冲数据
             {
                 //vao
                 m_mapKeyToVao[key] = new QOpenGLVertexArrayObject(this);
@@ -189,7 +213,7 @@ void MGLModel::initialize()
                     m_mapKeyToEbo[key].allocate(m_mapKeyToIndexBuffer[key], m_mapKeyToIndexBufferSize[key]);
                 }
             }
-            //顶点数据规则
+            //顶点数据布局
             {
                 QMapIterator<QString, MGLAttributeBufferPara> iter1(m_mapKeyToNameToAttributeBufferPara[key]);
                 while (iter1.hasNext())
@@ -201,9 +225,36 @@ void MGLModel::initialize()
                     m_mapKeyToShaderProgram[key]->enableAttributeArray(name.toStdString().c_str());
                 }
             }
+            m_mapKeyToVbo[key].release();
+            //实例化数组顶点Divisor
+            if(m_mapKeyToInstanceVertexBuffer.contains(key) && m_mapKeyToInstanceVertexBuffer[key])
+            {
+                //instanceVbo
+                m_mapKeyToInstanceVbo[key] = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+                m_mapKeyToInstanceVbo[key].create();
+                m_mapKeyToInstanceVbo[key].bind();
+                m_mapKeyToInstanceVbo[key].setUsagePattern(QOpenGLBuffer::StaticDraw);
+                m_mapKeyToInstanceVbo[key].allocate(m_mapKeyToInstanceVertexBuffer[key], m_mapKeyToInstanceVertexBufferSize[key]);
+                //实例化数组Divisor
+                QMapIterator<QString, int> iter1(m_mapKeyToNameToInstanceAttribDivisor[key]);
+                while (iter1.hasNext())
+                {
+                    iter1.next();
+                    QString name = iter1.key();
+                    int divisor = iter1.value();
+                    int attrLocation = m_mapKeyToShaderProgram[key]->attributeLocation(name);
+                    //顶点数据布局
+                    MGLAttributeBufferPara para = m_mapKeyToNameToInstanceAttributeBufferPara[key][name];
+                    m_mapKeyToShaderProgram[key]->setAttributeBuffer(name.toStdString().c_str(), para.type, para.offset, para.tupleSize, para.stride);
+                    m_mapKeyToShaderProgram[key]->enableAttributeArray(name.toStdString().c_str());
+                    //Divisor
+                    qDebug()<<"attrLocation: "<<attrLocation;
+                    glVertexAttribDivisor((GLint)attrLocation, divisor);
+                }
+                m_mapKeyToInstanceVbo[key].release();
+            }
             //release
             {
-                m_mapKeyToVbo[key].release();
                 m_mapKeyToVao[key]->release();
                 m_mapKeyToShaderProgram[key]->release();
             }
@@ -268,8 +319,7 @@ void MGLModel::initialize()
         {
             m_pFbo = new QOpenGLFramebufferObject(pGLWidget->size(),QOpenGLFramebufferObject::Depth);
         }
-        //初始化gl函数库
-        initializeOpenGLFunctions();
+        //设置状态
         m_isInitializeFinished = true;
     }
     else

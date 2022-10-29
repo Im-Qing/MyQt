@@ -86,4 +86,16 @@ protected:
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
 };
 
+//实例化(绘制大量的模型,经过测试，如果用循环来绘制10万个模型时，会出现明显卡顿，而使用实例化则不会)
+class MModelInstance : public MGLModel
+{
+    Q_OBJECT
+public:
+    MModelInstance(int id, QObject *parent = nullptr);
+protected:
+    virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
+};
+
 #endif // MMODELTEST_H
+
+

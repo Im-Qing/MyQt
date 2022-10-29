@@ -8,7 +8,7 @@ MGLModel *MModelTest::getModel()
 {
     MGLModel *pModel = nullptr;
 
-    m_modelId = 7;
+    m_modelId = 8;
     switch (m_modelId)
     {
     case 1:
@@ -31,6 +31,9 @@ MGLModel *MModelTest::getModel()
         break;
     case 7:
         pModel = new MModelSkyBox(m_modelId, this);
+        break;
+    case 8:
+        pModel = new MModelInstance(m_modelId, this);
         break;
     }
 
@@ -945,4 +948,125 @@ void MModelSkyBox::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D
     glDepthFunc(GL_LESS);
     release(key);
 }
+
+
+MModelInstance::MModelInstance(int id, QObject *parent): MGLModel(id, parent)
+{
+    static float cubeVertices[] = {
+        // positions          // texture Coords
+        -0.05f, -0.05f, -0.05f,  0.0f, 0.0f,
+        0.05f, -0.05f, -0.05f,  1.0f, 0.0f,
+        0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
+        0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
+        -0.05f,  0.05f, -0.05f,  0.0f, 1.0f,
+        -0.05f, -0.05f, -0.05f,  0.0f, 0.0f,
+
+        -0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
+        0.05f, -0.05f,  0.05f,  1.0f, 0.0f,
+        0.05f,  0.05f,  0.05f,  1.0f, 1.0f,
+        0.05f,  0.05f,  0.05f,  1.0f, 1.0f,
+        -0.05f,  0.05f,  0.05f,  0.0f, 1.0f,
+        -0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
+
+        -0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
+        -0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
+        -0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
+        -0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
+        -0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
+        -0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
+
+        0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
+        0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
+        0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
+        0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
+        0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
+        0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
+
+        -0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
+        0.05f, -0.05f, -0.05f,  1.0f, 1.0f,
+        0.05f, -0.05f,  0.05f,  1.0f, 0.0f,
+        0.05f, -0.05f,  0.05f,  1.0f, 0.0f,
+        -0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
+        -0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
+
+        -0.05f,  0.05f, -0.05f,  0.0f, 1.0f,
+        0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
+        0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
+        0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
+        -0.05f,  0.05f,  0.05f,  0.0f, 0.0f,
+        -0.05f,  0.05f, -0.05f,  0.0f, 1.0f
+    };
+    static float points[] = {
+        // positions     // colors
+        -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
+         0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
+        -0.05f, -0.05f,  0.0f, 0.0f, 1.0f,
+
+        -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
+         0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
+         0.05f,  0.05f,  0.0f, 1.0f, 1.0f
+    };
+    //实例化数组
+    static QVector2D translations[1000000];
+    int index = 0;
+    float offset = 0.1f;
+    for (int y = -1000; y < 1000; y += 2)
+    {
+        for (int x = -1000; x < 1000; x += 2)
+        {
+            QVector2D translation;
+            translation.setX((float)x / 10.0f + offset);
+            translation.setY((float)y / 10.0f + offset);
+            translations[index++] = translation;
+        }
+    }
+    //绘制箱子需要的数据
+    {
+        setCurrentKey(0);
+        addVertices(cubeVertices, sizeof(cubeVertices));
+        addTexture2DFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
+        addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/instance.vert");
+        addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/instance.frag");
+        addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
+        addAttributeBuffer("vTexCoord", GL_FLOAT, 3*sizeof(float), 2, 5*sizeof(float));
+        //实例化数组
+        addInstanceVertices(&translations, sizeof(translations));
+        addInstanceAttributeBuffer("vOffset", GL_FLOAT, 0*sizeof(float), 2, 2*sizeof(float));
+        addVertexAttribDivisor("vOffset", 1);
+    }
+}
+
+void MModelInstance::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
+{
+    //深度测试
+    glEnable(GL_DEPTH_TEST);
+    //清除缓冲
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    int key = 0;
+    //绘制箱子
+    bind(key);
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    //for(int i = 0; i<100; i++)
+    {
+//        //生产随机位置
+//        float vRand = qrand()%10 * 1.0f;
+//        int vMin = qrand()%10;
+//        vRand = pow(-1, vMin) * vRand;
+        //变换矩阵，顺序为：缩放->旋转->位移
+        glm::mat4 modelTranMat = glm::mat4(1.0f);
+//        modelTranMat = glm::translate(modelTranMat, glm::vec3( vRand, vRand, vRand));                   //平移
+//        float angle = 20.0f * i;
+//        modelTranMat = glm::rotate(modelTranMat, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));    //旋转(逆时针为正)
+//        modelTranMat = glm::scale(modelTranMat, glm::vec3(1.0, 1.0, 1.0));                          //缩放
+        pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, 1000000);
+    }
+    release(key);
+}
+
 

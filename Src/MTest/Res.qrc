@@ -20,5 +20,7 @@
         <file>Res/Img/skybox/top.jpg</file>
         <file>Res/GLSL/fbo.frag</file>
         <file>Res/GLSL/fbo.vert</file>
+        <file>Res/GLSL/instance.frag</file>
+        <file>Res/GLSL/instance.vert</file>
     </qresource>
 </RCC>
