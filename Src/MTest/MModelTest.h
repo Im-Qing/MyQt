@@ -1,6 +1,8 @@
 ﻿#ifndef MMODELTEST_H
 #define MMODELTEST_H
 
+#include <QDateTime>
+
 #include "MOpenGL/MGLModel.h"
 
 using namespace NS_MOpenGL;

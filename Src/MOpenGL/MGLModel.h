@@ -35,8 +35,8 @@ public:
     void addAttributeBuffer (const QString& name, GLenum type, int offset, int tupleSize, int stride = 0);
     void addIndexs(unsigned int* indexs, int nSize);
     void addInstanceVertices(void* instanceVertices, int nSize);
-    void addInstanceAttributeBuffer (const QString& name, GLenum type, int offset, int tupleSize, int stride = 0);
-    void addVertexAttribDivisor(const QString& name, GLuint divisor);
+    void addInstanceAttributeBuffer (int location, GLenum type, int offset, int tupleSize, int stride = 0);
+    void addVertexAttribDivisor(int location, GLuint divisor);
     ///
     /// \brief addTexture2DFile
     /// \param index 纹理序号
@@ -87,8 +87,8 @@ private:
     QMap<int, int> m_mapKeyToIndexBufferSize;               //模型元素缓冲数据大小集合
     QMap<int, void*> m_mapKeyToInstanceVertexBuffer;               //实例化顶点缓冲数据集合
     QMap<int, int> m_mapKeyToInstanceVertexBufferSize;              //实例化顶点缓冲数据大小集合
-    QMap<int, QMap<QString, MGLAttributeBufferPara>> m_mapKeyToNameToInstanceAttributeBufferPara;       //实例化顶点数据buffer定义集合
-    QMap<int, QMap<QString, int>> m_mapKeyToNameToInstanceAttribDivisor;       //实例化顶点数据buffer定义集合
+    QMap<int, QMap<int, MGLAttributeBufferPara>> m_mapKeyToNameToInstanceAttributeBufferPara;       //实例化顶点数据buffer定义集合
+    QMap<int, QMap<int, int>> m_mapKeyToNameToInstanceAttribDivisor;       //实例化顶点数据buffer定义集合
     QMap<int, QMap<int, QString>> m_mapKeyToIndexToVariableName;                                //纹理变量名集合
     QMap<int, QMap<int, QString>> m_mapKeyToIndexToTextureFile;                                 //纹理文件集合
     QMap<int, QMap<int, QStringList>> m_mapKeyToIndexToSkyBoxTextureFile;                       //天空盒纹理文件集合

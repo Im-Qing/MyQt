@@ -954,48 +954,49 @@ MModelInstance::MModelInstance(int id, QObject *parent): MGLModel(id, parent)
 {
     static float cubeVertices[] = {
         // positions          // texture Coords
-        -0.05f, -0.05f, -0.05f,  0.0f, 0.0f,
-        0.05f, -0.05f, -0.05f,  1.0f, 0.0f,
-        0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
-        0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
-        -0.05f,  0.05f, -0.05f,  0.0f, 1.0f,
-        -0.05f, -0.05f, -0.05f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-        -0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
-        0.05f, -0.05f,  0.05f,  1.0f, 0.0f,
-        0.05f,  0.05f,  0.05f,  1.0f, 1.0f,
-        0.05f,  0.05f,  0.05f,  1.0f, 1.0f,
-        -0.05f,  0.05f,  0.05f,  0.0f, 1.0f,
-        -0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-        -0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
-        -0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
-        -0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
-        -0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
-        -0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
-        -0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-        0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
-        0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
-        0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
-        0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
-        0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
-        0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-        -0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
-        0.05f, -0.05f, -0.05f,  1.0f, 1.0f,
-        0.05f, -0.05f,  0.05f,  1.0f, 0.0f,
-        0.05f, -0.05f,  0.05f,  1.0f, 0.0f,
-        -0.05f, -0.05f,  0.05f,  0.0f, 0.0f,
-        -0.05f, -0.05f, -0.05f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-        -0.05f,  0.05f, -0.05f,  0.0f, 1.0f,
-        0.05f,  0.05f, -0.05f,  1.0f, 1.0f,
-        0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
-        0.05f,  0.05f,  0.05f,  1.0f, 0.0f,
-        -0.05f,  0.05f,  0.05f,  0.0f, 0.0f,
-        -0.05f,  0.05f, -0.05f,  0.0f, 1.0f
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
+
     static float points[] = {
         // positions     // colors
         -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
@@ -1007,18 +1008,35 @@ MModelInstance::MModelInstance(int id, QObject *parent): MGLModel(id, parent)
          0.05f,  0.05f,  0.0f, 1.0f, 1.0f
     };
     //实例化数组
-    static QVector2D translations[1000000];
-    int index = 0;
-    float offset = 0.1f;
-    for (int y = -1000; y < 1000; y += 2)
+    unsigned int amount = 1000000;
+    glm::mat4* modelMatrices;
+    modelMatrices = new glm::mat4[amount];
+    srand(static_cast<unsigned int>(QDateTime::currentDateTime().toSecsSinceEpoch())); // initialize random seed
+    float radius = 150.0;
+    float offset = 25.0f;
+    for (unsigned int i = 0; i < amount; i++)
     {
-        for (int x = -1000; x < 1000; x += 2)
-        {
-            QVector2D translation;
-            translation.setX((float)x / 10.0f + offset);
-            translation.setY((float)y / 10.0f + offset);
-            translations[index++] = translation;
-        }
+        glm::mat4 model = glm::mat4(1.0f);
+        // 1. translation: displace along circle with 'radius' in range [-offset, offset]
+        float angle = (float)i / (float)amount * 360.0f;
+        float displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float x = sin(angle) * radius + displacement;
+        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float y = displacement * 0.4f; // keep height of asteroid field smaller compared to width of x and z
+        displacement = (rand() % (int)(2 * offset * 100)) / 100.0f - offset;
+        float z = cos(angle) * radius + displacement;
+        model = glm::translate(model, glm::vec3(x, y, z));
+
+        // 2. scale: Scale between 0.05 and 0.25f
+        float scale = static_cast<float>((rand() % 20) / 100.0 + 0.05);
+        model = glm::scale(model, glm::vec3(scale));
+
+        // 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
+        float rotAngle = static_cast<float>((rand() % 360));
+        model = glm::rotate(model, rotAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+
+        // 4. now add to list of matrices
+        modelMatrices[i] = model;
     }
     //绘制箱子需要的数据
     {
@@ -1027,12 +1045,18 @@ MModelInstance::MModelInstance(int id, QObject *parent): MGLModel(id, parent)
         addTexture2DFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
         addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/instance.vert");
         addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/instance.frag");
-        addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
-        addAttributeBuffer("vTexCoord", GL_FLOAT, 3*sizeof(float), 2, 5*sizeof(float));
+        addAttributeBuffer("aPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
+        addAttributeBuffer("aTexCoord", GL_FLOAT, 3*sizeof(float), 2, 5*sizeof(float));
         //实例化数组
-        addInstanceVertices(&translations, sizeof(translations));
-        addInstanceAttributeBuffer("vOffset", GL_FLOAT, 0*sizeof(float), 2, 2*sizeof(float));
-        addVertexAttribDivisor("vOffset", 1);
+        addInstanceVertices(modelMatrices, amount * sizeof(glm::mat4));
+        addInstanceAttributeBuffer(2, GL_FLOAT, 0 * sizeof(glm::vec4), 4, sizeof(glm::mat4));
+        addVertexAttribDivisor(2, 1);
+        addInstanceAttributeBuffer(3, GL_FLOAT, 1 * sizeof(glm::vec4), 4, sizeof(glm::mat4));
+        addVertexAttribDivisor(3, 1);
+        addInstanceAttributeBuffer(4, GL_FLOAT, 2 * sizeof(glm::vec4), 4, sizeof(glm::mat4));
+        addVertexAttribDivisor(4, 1);
+        addInstanceAttributeBuffer(5, GL_FLOAT, 3 * sizeof(glm::vec4), 4, sizeof(glm::mat4));
+        addVertexAttribDivisor(5, 1);
     }
 }
 

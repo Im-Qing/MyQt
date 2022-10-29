@@ -69,20 +69,19 @@ void MGLModel::addInstanceVertices(void *instanceVertices, int nSize)
     m_mapKeyToInstanceVertexBufferSize[m_currentKey] = nSize;
 }
 
-void MGLModel::addInstanceAttributeBuffer(const QString &name, GLenum type, int offset, int tupleSize, int stride)
+void MGLModel::addInstanceAttributeBuffer(int location, GLenum type, int offset, int tupleSize, int stride)
 {
     MGLAttributeBufferPara attributeBufferPara;
-    attributeBufferPara.name = name;
     attributeBufferPara.type = type;
     attributeBufferPara.offset = offset;
     attributeBufferPara.tupleSize = tupleSize;
     attributeBufferPara.stride = stride;
-    m_mapKeyToNameToInstanceAttributeBufferPara[m_currentKey][name] = attributeBufferPara;
+    m_mapKeyToNameToInstanceAttributeBufferPara[m_currentKey][location] = attributeBufferPara;
 }
 
-void MGLModel::addVertexAttribDivisor(const QString &name, GLuint divisor)
+void MGLModel::addVertexAttribDivisor(int location, GLuint divisor)
 {
-    m_mapKeyToNameToInstanceAttribDivisor[m_currentKey][name] = divisor;
+    m_mapKeyToNameToInstanceAttribDivisor[m_currentKey][location] = divisor;
 }
 
 void MGLModel::addTexture2DFile(int index, const QString& variableName, const QString &fileName)
@@ -236,20 +235,18 @@ void MGLModel::initialize()
                 m_mapKeyToInstanceVbo[key].setUsagePattern(QOpenGLBuffer::StaticDraw);
                 m_mapKeyToInstanceVbo[key].allocate(m_mapKeyToInstanceVertexBuffer[key], m_mapKeyToInstanceVertexBufferSize[key]);
                 //实例化数组Divisor
-                QMapIterator<QString, int> iter1(m_mapKeyToNameToInstanceAttribDivisor[key]);
+                QMapIterator<int, int> iter1(m_mapKeyToNameToInstanceAttribDivisor[key]);
                 while (iter1.hasNext())
                 {
                     iter1.next();
-                    QString name = iter1.key();
+                    int location = iter1.key();
                     int divisor = iter1.value();
-                    int attrLocation = m_mapKeyToShaderProgram[key]->attributeLocation(name);
                     //顶点数据布局
-                    MGLAttributeBufferPara para = m_mapKeyToNameToInstanceAttributeBufferPara[key][name];
-                    m_mapKeyToShaderProgram[key]->setAttributeBuffer(name.toStdString().c_str(), para.type, para.offset, para.tupleSize, para.stride);
-                    m_mapKeyToShaderProgram[key]->enableAttributeArray(name.toStdString().c_str());
+                    MGLAttributeBufferPara para = m_mapKeyToNameToInstanceAttributeBufferPara[key][location];
+                    m_mapKeyToShaderProgram[key]->setAttributeBuffer(location, para.type, para.offset, para.tupleSize, para.stride);
+                    m_mapKeyToShaderProgram[key]->enableAttributeArray(location);
                     //Divisor
-                    qDebug()<<"attrLocation: "<<attrLocation;
-                    glVertexAttribDivisor((GLint)attrLocation, divisor);
+                    glVertexAttribDivisor((GLint)location, divisor);
                 }
                 m_mapKeyToInstanceVbo[key].release();
             }
