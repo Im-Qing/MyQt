@@ -22,5 +22,7 @@
         <file>Res/GLSL/fbo.vert</file>
         <file>Res/GLSL/instance.frag</file>
         <file>Res/GLSL/instance.vert</file>
+        <file>Res/GLSL/environmentMap.frag</file>
+        <file>Res/GLSL/environmentMap.vert</file>
     </qresource>
 </RCC>

@@ -98,6 +98,16 @@ protected:
     virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
 };
 
+//环境映射(反射、折射)
+class MModelEnvironmentMap : public MGLModel
+{
+    Q_OBJECT
+public:
+    MModelEnvironmentMap(int id, QObject *parent = nullptr);
+protected:
+    virtual void paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos);
+};
+
 #endif // MMODELTEST_H
 
 

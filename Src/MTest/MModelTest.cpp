@@ -8,7 +8,7 @@ MGLModel *MModelTest::getModel()
 {
     MGLModel *pModel = nullptr;
 
-    m_modelId = 8;
+    m_modelId = 9;
     switch (m_modelId)
     {
     case 1:
@@ -34,6 +34,9 @@ MGLModel *MModelTest::getModel()
         break;
     case 8:
         pModel = new MModelInstance(m_modelId, this);
+        break;
+    case 9:
+        pModel = new MModelEnvironmentMap(m_modelId, this);
         break;
     }
 
@@ -1094,3 +1097,165 @@ void MModelInstance::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector
 }
 
 
+MModelEnvironmentMap::MModelEnvironmentMap(int id, QObject *parent): MGLModel(id, parent)
+{
+    static float cubeVertices[] = {
+            //顶点                //法线
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+    };
+    static float skyboxVertices[] = {
+        // positions
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+    QStringList skyBoxTexturePaths{
+        "://Res/Img/skybox/right.jpg",
+        "://Res/Img/skybox/left.jpg",
+        "://Res/Img/skybox/top.jpg",
+        "://Res/Img/skybox/bottom.jpg",
+        "://Res/Img/skybox/front.jpg",
+        "://Res/Img/skybox/back.jpg",
+    };
+    //绘制箱子需要的数据
+    setCurrentKey(0);
+    addVertices(cubeVertices, sizeof(cubeVertices));
+    addSkyBoxTextureFile(0, "uSkyboxTexture", skyBoxTexturePaths);
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/environmentMap.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/environmentMap.frag");
+    addAttributeBuffer("aPos", GL_FLOAT, 0*sizeof(float), 3, 6*sizeof(float));
+    addAttributeBuffer("aNormal", GL_FLOAT, 3*sizeof(float), 3, 6*sizeof(float));
+    //绘制天空盒需要的数据
+    setCurrentKey(1);
+    addVertices(skyboxVertices, sizeof(skyboxVertices));
+    addSkyBoxTextureFile(1, "uSkyboxTexture", skyBoxTexturePaths);
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/skybox.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/skybox.frag");
+    addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 3*sizeof(float));
+}
+
+void MModelEnvironmentMap::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
+{
+    glm::vec3 cubePositions[] = {
+      glm::vec3( -1.0f, 0.0f, -1.0f),
+      glm::vec3( -0.5f, 0.0f, -5.0f)
+    };
+
+    //深度测试
+    glEnable(GL_DEPTH_TEST);
+    //清除缓冲
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    int key = 0;
+    //绘制箱子
+    bind(key);
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    for(int i = 0; i<2; i++)
+    {
+        //变换矩阵，顺序为：缩放->旋转->位移
+        glm::mat4 modelTranMat = glm::mat4(1.0f);
+        modelTranMat = glm::translate(modelTranMat, cubePositions[i]);                   //平移
+//        float angle = 20.0f * i;
+//        modelTranMat = glm::rotate(modelTranMat, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));    //旋转(逆时针为正)
+//        modelTranMat = glm::scale(modelTranMat, glm::vec3(1.0, 1.0, 1.0));                          //缩放
+        pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+    glDepthFunc(GL_LEQUAL);
+    release(key);
+
+    //绘制天空盒
+    key = 1;
+    bind(key);
+    pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    viewMat.setColumn(3,QVector4D(0,0,0,1.0f));        //这句是关键，不关心视点的位置，只用它的旋转矩阵
+    glm::mat4 modelTranMat = glm::mat4(1.0f);
+    pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+    pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDepthFunc(GL_LESS);
+    release(key);
+}
