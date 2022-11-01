@@ -21,6 +21,8 @@ class MOPENGL_EXPORT MGLWidget : public QOpenGLWidget , protected QOpenGLExtraFu
 public:
     MGLWidget(MGLScene* scene, QWidget *parent = Q_NULLPTR);
     ~MGLWidget();
+public:
+    MGLCamera* getCamera(){ return m_pGLCamera; }
 protected:
     void initializeGL();
     void paintGL();

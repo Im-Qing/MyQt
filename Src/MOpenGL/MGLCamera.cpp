@@ -30,6 +30,17 @@ QVector3D MGLCamera::getCameraPos()
     return m_cameraPos;
 }
 
+QMatrix4x4 MGLCamera::getMirroringCameraViewMat()
+{
+    QVector3D cameraPos = -m_cameraPos;
+    QVector3D cameraFront = -m_cameraFront;
+    QMatrix4x4 mirroringViewMat;
+    mirroringViewMat.setToIdentity();
+    mirroringViewMat.lookAt(cameraPos, cameraPos + cameraFront, m_cameraUp);
+
+    return mirroringViewMat;
+}
+
 bool MGLCamera::eventFilter(QObject *obj, QEvent *ev)
 {
     if(obj == parent())     //gl窗口事件

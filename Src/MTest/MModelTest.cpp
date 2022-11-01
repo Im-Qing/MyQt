@@ -8,7 +8,7 @@ MGLModel *MModelTest::getModel()
 {
     MGLModel *pModel = nullptr;
 
-    m_modelId = 9;
+    m_modelId = 10;
     switch (m_modelId)
     {
     case 1:
@@ -37,6 +37,9 @@ MGLModel *MModelTest::getModel()
         break;
     case 9:
         pModel = new MModelEnvironmentMap(m_modelId, this);
+        break;
+    case 10:
+        pModel = new MModelMirror(m_modelId, this);
         break;
     }
 
@@ -1254,6 +1257,227 @@ void MModelEnvironmentMap::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, Q
     glm::mat4 modelTranMat = glm::mat4(1.0f);
     pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
     pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDepthFunc(GL_LESS);
+    release(key);
+}
+
+
+MModelMirror::MModelMirror(int id, QObject *parent): MGLModel(id, parent)
+{
+    //镜子
+    static float mirrorVertices[] = {
+        // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+        1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        1.0f, -1.0f,  1.0f, 0.0f,
+        1.0f,  1.0f,  1.0f, 1.0f
+    };
+    static float cubeVertices[] = {
+        // positions          // texture Coords
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+    };
+    static float skyboxVertices[] = {
+        // positions
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+    QStringList skyBoxTexturePaths{
+        "://Res/Img/skybox/right.jpg",
+        "://Res/Img/skybox/left.jpg",
+        "://Res/Img/skybox/top.jpg",
+        "://Res/Img/skybox/bottom.jpg",
+        "://Res/Img/skybox/front.jpg",
+        "://Res/Img/skybox/back.jpg",
+    };
+    //绘制箱子需要的数据
+    setCurrentKey(0);
+    addVertices(cubeVertices, sizeof(cubeVertices));
+    addTexture2DFile(0, "uTexture1", "://Res/Img/onetwo.jpg");
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/blend.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/blend.frag");
+    addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 5*sizeof(float));
+    addAttributeBuffer("vTexCoord", GL_FLOAT, 3*sizeof(float), 2, 5*sizeof(float));
+    //绘制镜子需要的数据
+    setCurrentKey(1);
+    addVertices(mirrorVertices, sizeof(mirrorVertices));
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/fbo.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/fbo.frag");
+    addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 2, 4*sizeof(float));
+    addAttributeBuffer("vTexCoord", GL_FLOAT, 2*sizeof(float), 2, 4*sizeof(float));
+    //绘制天空盒需要的数据
+    setCurrentKey(2);
+    addVertices(skyboxVertices, sizeof(skyboxVertices));
+    addSkyBoxTextureFile(1, "uSkyboxTexture", skyBoxTexturePaths);
+    addShaderFromSourceFile(QOpenGLShader::Vertex, "://Res/GLSL/skybox.vert");
+    addShaderFromSourceFile(QOpenGLShader::Fragment, "://Res/GLSL/skybox.frag");
+    addAttributeBuffer("vPos", GL_FLOAT, 0*sizeof(float), 3, 3*sizeof(float));
+}
+
+void MModelMirror::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, QVector3D cameraPos)
+{
+    glm::vec3 cubePositions[] = {
+      glm::vec3( -0.0f, 0.0f, -0.0f),
+      glm::vec3( -0.5f, 0.0f, -5.0f)
+    };
+
+    //深度测试
+    glEnable(GL_DEPTH_TEST);
+    //清除缓冲
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    int key = 0;
+
+    //将场景绘制到纹理
+    //启用自定义帧缓冲
+    bindFbo();
+    //清除缓冲
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //绘制箱子
+    bind(key);
+    QOpenGLShaderProgram* pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    QMatrix4x4 viewMatTmp = viewMat;
+    viewMatTmp = getMirroringCameraViewMat();   //摄像机反向，模拟镜像的效果
+    pShaderProgram->setUniformValue("uViewMat", viewMatTmp);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    glm::mat4 modelTranMat = glm::mat4(1.0f);
+    for(int i = 0; i<1; i++)
+    {
+        //变换矩阵，顺序为：缩放->旋转->位移
+        //modelTranMat = glm::translate(modelTranMat, cubePositions[i]);                   //平移
+//        float angle = 20.0f * i;
+//        modelTranMat = glm::rotate(modelTranMat, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));    //旋转(逆时针为正)
+//        modelTranMat = glm::scale(modelTranMat, glm::vec3(1.0, 1.0, 1.0));                          //缩放
+        pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+    glDepthFunc(GL_LEQUAL);
+    release(key);
+    //绘制天空盒
+    key = 2;
+    bind(key);
+    pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    viewMatTmp.setColumn(3,QVector4D(0,0,0,1.0f));        //这句是关键，不关心视点的位置，只用它的旋转矩阵
+    modelTranMat = glm::mat4(1.0f);
+    pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+    pShaderProgram->setUniformValue("uViewMat", viewMatTmp);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDepthFunc(GL_LESS);
+    release(key);
+    //禁用自定义帧缓冲
+    releaseFbo();
+
+    //绘制镜子，将自定义帧缓冲里的数据绘制到镜子上
+    key = 1;
+    bind(key);
+    bindFboTexture(key, "uTexture1");
+    pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    pShaderProgram->setUniformValue("uViewMat", viewMat);
+    pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    //变换矩阵，顺序为：缩放->旋转->位移
+    pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDepthFunc(GL_LEQUAL);
+    release(key);
+
+    //绘制天空盒
+    key = 2;
+    bind(key);
+    pShaderProgram = getShaderProgram(key);
+    //设置uniform变量值
+    viewMatTmp = viewMat;
+    viewMatTmp.setColumn(3,QVector4D(0,0,0,1.0f));        //这句是关键，不关心视点的位置，只用它的旋转矩阵
+    modelTranMat = glm::mat4(1.0f);
+    pShaderProgram->setUniformValue("uModelMat", MOpenGL::glmMat4ToQMat4(modelTranMat));
+    pShaderProgram->setUniformValue("uViewMat", viewMatTmp);
     pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
     glDrawArrays(GL_TRIANGLES, 0, 36);
     glDepthFunc(GL_LESS);

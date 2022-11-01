@@ -67,6 +67,8 @@ protected:
     /// \param key fbo的key值
     ///
     void bindFboTexture(int shaderProgramkey, const QString& variableName, int key = 0);
+    //获取镜像的摄像机，用以实现镜子特效
+    QMatrix4x4 getMirroringCameraViewMat();
 private:
     void initialize();
     //由MGLWidget对象调用

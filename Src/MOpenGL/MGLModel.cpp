@@ -160,6 +160,11 @@ void MGLModel::bindFboTexture(int shaderProgramkey, const QString &variableName,
     }
 }
 
+QMatrix4x4 MGLModel::getMirroringCameraViewMat()
+{
+    return m_pScene->getGLWidget()->getCamera()->getMirroringCameraViewMat();
+}
+
 void MGLModel::initialize()
 {
     MGLWidget* pGLWidget = m_pScene->getGLWidget();

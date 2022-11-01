@@ -20,6 +20,7 @@ public:
     QMatrix4x4 getViewMat();
     QMatrix4x4 getProjectionMat();
     QVector3D getCameraPos();
+    QMatrix4x4 getMirroringCameraViewMat();
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;
 signals:
