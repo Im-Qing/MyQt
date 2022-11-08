@@ -34,14 +34,13 @@ RESOURCES += \
     Res.qrc
 
 DEPENDPATH += \
-    $$PWD/../MOpenGL \
     $$PWD/../MWidget \
     $$PWD/../MCore
 
 win32{
     LIBS += \
         -L$$PWD/../../Lib/Win \
-            -lMOpenGLd -lMCored -lMWidgetd  -lMOsgd \
+            -lMCored -lMWidgetd  -lMOsgd \
         -L$$PWD/../../3rdPart/OpenSceneGraph-3.6.4/lib \
             -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd
 
@@ -50,14 +49,12 @@ win32{
 mac{
     CONFIG(debug,debug|release){
         LIBS += \
-            -L$$PWD/../../Temp/Src/MOpenGL -lMOpenGLd \
             -L$$PWD/../../Temp/Src/MWidget -lMWidgetd \
             -L$$PWD/../../Temp/Src/MCore -lMCored \
             -L$$PWD/../../Temp/Src/MOsg -lMOsgd
     }
     CONFIG(release,debug|release){
         LIBS += \
-            -L$$PWD/../../Temp/Src/MOpenGL -lMOpenGL \
             -L$$PWD/../../Temp/Src/MWidget -lMWidget \
             -L$$PWD/../../Temp/Src/MCore -lMCore \
             -L$$PWD/../../Temp/Src/MOsg -lMOsg

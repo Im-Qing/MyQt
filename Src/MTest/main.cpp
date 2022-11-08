@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QTextCodec>
+#include <QOpenGLContext>
 
 int main(int argc, char *argv[])
 {

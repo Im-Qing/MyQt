@@ -14,9 +14,6 @@ MMainWindow::MMainWindow(QWidget *parent)
     //m_pTimer->start(50);
     connect(m_pTimer, &QTimer::timeout,this,&MMainWindow::slot_timeout);
 
-    //m_pMGLWidget = new MGLWidget(this);
-    //ui->gridLayout->addWidget(m_pMGLWidget);
-
     m_pMOsgScene = new MOsgScene(this);
     m_pMOsgScene->addNode("../../Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
 
