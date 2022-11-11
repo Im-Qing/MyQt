@@ -1234,6 +1234,7 @@ void MModelEnvironmentMap::paint(QMatrix4x4 viewMat, QMatrix4x4 projectionMat, Q
     //设置uniform变量值
     pShaderProgram->setUniformValue("uViewMat", viewMat);
     pShaderProgram->setUniformValue("uProjectionMat", projectionMat);
+    pShaderProgram->setUniformValue("uCameraPos", cameraPos);
     for(int i = 0; i<2; i++)
     {
         //变换矩阵，顺序为：缩放->旋转->位移
