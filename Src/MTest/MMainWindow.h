@@ -4,11 +4,9 @@
 #include <QMainWindow>
 #include <QTimer>
 
-#include "MOpenGL/MGLWidget.h"
 #include "MOsg/MOsgScene.h"
 #include "MOsg/MOsgView.h"
 
-using namespace NS_MOpenGL;
 using namespace NS_MOsg;
 
 QT_BEGIN_NAMESPACE
@@ -29,8 +27,6 @@ public slots:
 private:
     Ui::MMainWindow *ui;
     QTimer* m_pTimer;
-
-    MGLWidget* m_pMGLWidget = nullptr;
 
     MOsgScene* m_pMOsgScene = nullptr;
     MOsgView* m_pMOsgView = nullptr;
