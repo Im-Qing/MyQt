@@ -32,10 +32,10 @@ HEADERS += \
 win32{
     TargetDir = /
     CONFIG(debug,debug|release){
-        TargetDir = $$PWD/../../Temp/Src/$${TARGET}/debug
+        TargetDir = $$PWD/debug
     }
     CONFIG(release,debug|release){
-        TargetDir = $$PWD/../../Temp/Src/$${TARGET}/release
+        TargetDir = $$PWD/release
     }
 
     TargetDll = $$TargetDir/*.dll

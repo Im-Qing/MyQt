@@ -75,13 +75,16 @@ compile_commands.json
 *.doc
 *.zip
 *.bat
-
 *.DS_Store
 *.plist
+*.stash
+
 /Temp
 /[Bb]in
 /[Ll]ib
 /Thirdpart
 /3rdPart
 /[Dd]ata
+[Rr]elease/
+[Dd]ebug/
 
