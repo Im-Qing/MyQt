@@ -40,12 +40,16 @@ DEPENDPATH += \
 
 win32{
     LIBS += \
-        -L$$PWD/../../Lib/Win \
+        -L$$PWD/../../Lib \
             -lMCored -lMWidgetd  -lMOsgd \
         -L$$PWD/../../3rdPart/OpenSceneGraph-3.6.4/lib \
-            -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd -losgFXd
+            -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd -losgFXd \
+        -L$$PWD/../../3rdPart/OpenSceneGraph-3rdparty/lib \
+            -zlibd
 
-    DESTDIR = $$PWD/../../Bin/Win
+    DESTDIR = $$PWD/../../Bin
+
+    QMAKE_CXXFLAGS += /utf-8
 }
 mac{
     CONFIG(debug,debug|release){

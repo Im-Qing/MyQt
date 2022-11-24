@@ -20,14 +20,16 @@ SOURCES += \
     MOsg.cpp \
     MOsgEventHandler.cpp \
     MOsgScene.cpp \
-    MOsgView.cpp
+    MOsgView.cpp \
+    MOsgModel.cpp
 
 HEADERS += \
     MOsgEventHandler.h \
     MOsgScene.h \
     MOsgView.h \
     MOsg_global.h \
-    MOsg.h
+    MOsg.h \
+    MOsgModel.h
 
 INCLUDEPATH += \
     $$PWD/../../3rdPart/OpenSceneGraph-3.6.4/include
@@ -35,7 +37,9 @@ INCLUDEPATH += \
 win32{
     LIBS += \
         -L$$PWD/../../3rdPart/OpenSceneGraph-3.6.4/lib \
-            -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd -losgFXd
+            -losgViewerd -losgTextd -losgGAd  -losgDBd -lzlibd -losgUtild -losgd -lOpenThreadsd -losgFXd \
+        -L$$PWD/../../3rdPart/OpenSceneGraph-3rdparty/lib \
+            -zlibd
 
     TargetDir = /
     CONFIG(debug,debug|release){
@@ -51,9 +55,9 @@ win32{
     TargetDll = $$replace(TargetDll, /, \\)
     TargetLib = $$replace(TargetLib, /, \\)
     #将输出目录中的"/"替换为"\"
-    OutputBinDir = $$PWD/../../Bin/Win/
+    OutputBinDir = $$PWD/../../Bin
     OutputBinDir = $$replace(OutputBinDir, /, \\)
-    OutputLibDir = $$PWD/../../Lib/Win/
+    OutputLibDir = $$PWD/../../Lib
     OutputLibDir = $$replace(OutputLibDir, /, \\)
     //执行copy命令
     QMAKE_POST_LINK += copy /Y $$TargetDll $$OutputBinDir && copy /Y $$TargetLib $$OutputLibDir

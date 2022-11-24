@@ -3,22 +3,7 @@
 
 #include "MOsg_global.h"
 
-#include <QObject>
-
-#include <osgDB/ReadFile>
-
-#include <osgViewer/Viewer>
-#include <osg/Switch>
-#include <osg/MatrixTransform>
-#include <osg/PositionAttitudeTransform>
-#include <osg/Geode>
-#include <osg/Geometry>
-#include <osg/ShapeDrawable>
-#include <osg/Shape>
-#include <osgFX/Scribe>
-#include <osg/Program>
-#include <osg/Shader>
-
+#include "MOsgModel.h"
 #include "MOsgEventHandler.h"
 
 namespace NS_MOsg

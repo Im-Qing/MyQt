@@ -20,6 +20,8 @@ class MMainWindow : public QMainWindow
 public:
     MMainWindow(QWidget *parent = nullptr);
     ~MMainWindow();
+public:
+    void sample_cow();
 public slots:
     void slot_timeout();
     void slot_test1(bool);
@@ -30,5 +32,6 @@ private:
 
     MOsgScene* m_pMOsgScene = nullptr;
     MOsgView* m_pMOsgView = nullptr;
+    osgViewer::Viewer* m_pViewer;
 };
 #endif // MMAINWINDOW_H
