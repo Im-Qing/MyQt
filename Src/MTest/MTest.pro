@@ -48,8 +48,6 @@ win32{
             -zlibd
 
     DESTDIR = $$PWD/../../Bin
-
-    QMAKE_CXXFLAGS += /utf-8
 }
 mac{
     CONFIG(debug,debug|release){

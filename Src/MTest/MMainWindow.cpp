@@ -2,6 +2,7 @@
 #include "ui_MMainWindow.h"
 
 #include <QDebug>
+#include <QTextCodec>
 
 #include <osgGA/TrackballManipulator>
 #include <osgGA/FlightManipulator>
@@ -76,9 +77,9 @@ void MMainWindow::sample_cow()
         m_pMOsgScene->addChild(rot.get());
     }
     //显示文字
-    if (false)
+    //if (false)
     {
-        osgText::Font* font1 = osgText::readFontFile("Data/OpenSceneGraph-Data-3.0.0/fonts/simhei.ttf");
+        osgText::Font* font1 = osgText::readFontFile("Data/OpenSceneGraph-Data-3.0.0/fonts/FZSTK.TTF");
         osg::Geode* geode = new osg::Geode;
         m_pMOsgScene->addChild(geode);
 
@@ -89,31 +90,35 @@ void MMainWindow::sample_cow()
         text->setAxisAlignment(osgText::Text::XZ_PLANE);
         //text->setDrawMode(osgText::Text::TEXT | osgText::Text::ALIGNMENT | osgText::Text::BOUNDINGBOX | osgText::Text::FILLEDBOUNDINGBOX);
 
-//        const char* str = "qwer显示文字";
-//        wchar_t* wStr;
-//        setlocale(LC_ALL, ".936"); //zh-CN就是一个专有名称，它对应的是大陆汉语
-//        int nSize = mbstowcs(NULL, str, 0);
-//        wStr = new wchar_t[nSize + 1];
-//        mbstowcs(wStr, str, nSize + 1);
+        QString str = QString::fromLocal8Bit("qwer显示文字");
 
-        QString str = "qwer显示文字";
 
-        text->setText(QString::fromUtf8("qwer显示文字").toStdString());
+        text->setText(str.toStdWString().c_str());
         geode->addDrawable(text);
     }
     //显示图片
-    //if (false)
+    if (false)
     {
-        osg::Geode* geode = new osg::Geode;
+        osg::Geode* geode = new osg::Geode();
+
+        osg::StateSet* stateset = geode->getOrCreateStateSet();
+
+        osg::ref_ptr<osg::Image> image = osgDB::readRefImageFile("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
+        if (image)
+        {
+            osg::Texture2D* texture = new osg::Texture2D;
+            texture->setImage(image);
+            texture->setMaxAnisotropy(8);
+            stateset->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
+        }
+
+        osg::Material* material = new osg::Material;
+        stateset->setAttribute(material);
+
+        // the globe
+        geode->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3(0.2f,0.0f,0.0f),2*2)));
+
         m_pMOsgScene->addChild(geode);
-
-        osg::ref_ptr<osg::DrawPixels> image = new osg::DrawPixels;
-        image->setPosition(osg::Vec3(0.0, 0.0, 0.0));
-
-        //裁剪区域
-        image->setSubImageDimensions(200, 200, 200, 200);
-        image->setImage(osgDB::readImageFile("Data/OpenSceneGraph-Data-3.0.0/Images/skymap.jpg"));
-        geode->addDrawable(image.get());
     }
 }
 
