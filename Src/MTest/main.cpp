@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     auto minor = format.minorVersion();
     qDebug() << "OpenGL Version Major:" << major << "OpenGL Version Minor:" << minor;
 
-//    QTextCodec *codec = QTextCodec::codecForName("GBK");
+//    QTextCodec *codec = QTextCodec::codecForName("UTF-8");
 //    QTextCodec::setCodecForLocale(codec);
 
     MMainWindow w;

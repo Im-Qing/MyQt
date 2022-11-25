@@ -77,7 +77,7 @@ void MMainWindow::sample_cow()
         m_pMOsgScene->addChild(rot.get());
     }
     //显示文字
-    //if (false)
+    if (false)
     {
         osgText::Font* font1 = osgText::readFontFile("Data/OpenSceneGraph-Data-3.0.0/fonts/FZSTK.TTF");
         osg::Geode* geode = new osg::Geode;
@@ -91,34 +91,65 @@ void MMainWindow::sample_cow()
         //text->setDrawMode(osgText::Text::TEXT | osgText::Text::ALIGNMENT | osgText::Text::BOUNDINGBOX | osgText::Text::FILLEDBOUNDINGBOX);
 
         QString str = QString::fromLocal8Bit("qwer显示文字");
-
-
         text->setText(str.toStdWString().c_str());
         geode->addDrawable(text);
     }
     //显示图片
-    if (false)
+    //if (false)
     {
-        osg::Geode* geode = new osg::Geode();
+        osg::ref_ptr<osg::Geometry> geom = new osg::Geometry;
+        //首先定义四个点
+        osg::ref_ptr<osg::Vec3Array> v = new osg::Vec3Array;
+        geom->setVertexArray( v.get() );
+        v->push_back( osg::Vec3( -1.f, 0.f, -1.f ) );
+        v->push_back( osg::Vec3( 1.f, 0.f, -1.f ) );
+        v->push_back( osg::Vec3( 1.f, 0.f, 1.f ) );
+        v->push_back( osg::Vec3( -1.f, 0.f, 1.f ) );
+//        //定义颜色数组
+//        osg::ref_ptr<osg::Vec4Array> c = new osg::Vec4Array;
+//        geom->setColorArray( c.get() );
+//        geom->setColorBinding( osg::Geometry::BIND_PER_VERTEX );
+//        c->push_back( osg::Vec4( 1.f, 0.f, 0.f, 1.f ) );
+//        c->push_back( osg::Vec4( 0.f, 1.f, 0.f, 1.f ) );
+//        c->push_back( osg::Vec4( 0.f, 0.f, 1.f, 1.f ) );
+//        c->push_back( osg::Vec4( 1.f, 1.f, 1.f, 1.f ) );
+        //定义纹理坐标
+        osg::ref_ptr<osg::Image> spImage = osgDB::readImageFile("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
+        osg::ref_ptr <osg::Texture2D> spTexture2D = new osg::Texture2D(spImage);
+        osg::ref_ptr<osg::Vec2Array> spCoordArray = new osg::Vec2Array();
+        spCoordArray->push_back(osg::Vec2(0.0, 1.0));
+        spCoordArray->push_back(osg::Vec2(0.0, 0));
+        spCoordArray->push_back(osg::Vec2(1.0, 0.0));
+        spCoordArray->push_back(osg::Vec2(1.0, 1.0));
 
-        osg::StateSet* stateset = geode->getOrCreateStateSet();
+        geom->setTexCoordArray(0, spCoordArray);
+        spTexture2D->setUnRefImageDataAfterApply(true);
+        osg::ref_ptr<osg::StateSet> spStateSet = geom->getOrCreateStateSet();
+        spStateSet->setTextureAttributeAndModes(0, spTexture2D);
+        spStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+        //要想看到png图片的透明效果，需要开启混合模式
+        spStateSet->setMode(GL_BLEND,osg::StateAttribute::ON);
+        spStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        //设置顶点关联方式
+        geom->addPrimitiveSet(
+                    new osg::DrawArrays( osg::PrimitiveSet::QUADS, 0, 4 ) );
 
-        osg::ref_ptr<osg::Image> image = osgDB::readRefImageFile("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
-        if (image)
-        {
-            osg::Texture2D* texture = new osg::Texture2D;
-            texture->setImage(image);
-            texture->setMaxAnisotropy(8);
-            stateset->setTextureAttributeAndModes(0,texture,osg::StateAttribute::ON);
-        }
-
-        osg::Material* material = new osg::Material;
-        stateset->setAttribute(material);
-
-        // the globe
-        geode->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3(0.2f,0.0f,0.0f),2*2)));
-
+        //几何组结点
+        osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+        geode->addDrawable( geom.get() );
         m_pMOsgScene->addChild(geode);
+
+        ////        osg::Geode* geode = new osg::Geode();
+
+
+
+        //
+        //
+
+        //        // the globe
+        //        geode->addDrawable(new osg::ShapeDrawable(new osg::Box(osg::Vec3(0.2f,0.0f,0.0f),2*2)));
+
+        ////        m_pMOsgScene->addChild(geode);
     }
 }
 
