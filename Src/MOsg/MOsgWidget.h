@@ -26,10 +26,10 @@
 
 namespace NS_MOsg
 {
-class MOSG_EXPORT MOsgView : public QGraphicsView
+class MOSG_EXPORT MOsgWidget : public QGraphicsView
 {
 public:
-    MOsgView(MOsgScene* pScene, QWidget *parent = nullptr);
+    MOsgWidget(MOsgScene* pScene, QWidget *parent = nullptr);
 public:
     void addModel(const QString& filePath);
     osgViewer::Viewer* getOsgViewer(){ return m_pViewer; }

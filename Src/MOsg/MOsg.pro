@@ -20,13 +20,13 @@ SOURCES += \
     MOsg.cpp \
     MOsgEventHandler.cpp \
     MOsgScene.cpp \
-    MOsgView.cpp \
-    MOsgModel.cpp
+    MOsgModel.cpp \
+    MOsgWidget.cpp
 
 HEADERS += \
     MOsgEventHandler.h \
     MOsgScene.h \
-    MOsgView.h \
+    MOsgWidget.h \
     MOsg_global.h \
     MOsg.h \
     MOsgModel.h

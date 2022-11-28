@@ -5,7 +5,7 @@
 #include <QTimer>
 
 #include "MOsg/MOsgScene.h"
-#include "MOsg/MOsgView.h"
+#include "MOsg/MOsgWidget.h"
 
 using namespace NS_MOsg;
 
@@ -31,7 +31,7 @@ private:
     QTimer* m_pTimer;
 
     MOsgScene* m_pMOsgScene = nullptr;
-    MOsgView* m_pMOsgView = nullptr;
+    MOsgWidget* m_pMOsgWidget = nullptr;
     osgViewer::Viewer* m_pViewer;
 };
 #endif // MMAINWINDOW_H
