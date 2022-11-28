@@ -19,13 +19,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     MOsg.cpp \
     MOsgEventHandler.cpp \
+    MOsgImage.cpp \
+    MOsgLine.cpp \
     MOsgScene.cpp \
     MOsgModel.cpp \
+    MOsgText.cpp \
     MOsgWidget.cpp
 
 HEADERS += \
     MOsgEventHandler.h \
+    MOsgImage.h \
+    MOsgLine.h \
     MOsgScene.h \
+    MOsgText.h \
     MOsgWidget.h \
     MOsg_global.h \
     MOsg.h \

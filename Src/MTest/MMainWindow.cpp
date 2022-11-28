@@ -253,7 +253,7 @@ void MMainWindow::sample_cow()
             text->setCharacterSize(10.f);
             text->setAxisAlignment(osgText::Text::XZ_PLANE);
             //text->setDrawMode(osgText::Text::TEXT | osgText::Text::ALIGNMENT | osgText::Text::BOUNDINGBOX | osgText::Text::FILLEDBOUNDINGBOX);
-            QString str = QString::fromLocal8Bit("显示中文");
+            QString str = QString::fromLocal8Bit("徐凯旋宝宝");
             text->setText(str.toStdWString().c_str());
             geode->addDrawable(text);
             pModel->addChild(rot);
