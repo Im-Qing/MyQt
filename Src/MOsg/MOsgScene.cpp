@@ -1,4 +1,5 @@
 #include "MOsgScene.h"
+#include "MOsgNode.h"
 
 using namespace NS_MOsg;
 
@@ -217,6 +218,11 @@ void MOsgScene::addNode(const QString &filePath)
     }
 
     //m_pViewer->getCameraManipulator()->home(0.0);
+}
+
+void MOsgScene::addNode(MOsgNode *node)
+{
+    addChild(node->get());
 }
 
 osg::ref_ptr<osg::Node> MOsgScene::createQuad()

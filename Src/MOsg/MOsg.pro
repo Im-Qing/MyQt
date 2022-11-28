@@ -21,6 +21,7 @@ SOURCES += \
     MOsgEventHandler.cpp \
     MOsgImage.cpp \
     MOsgLine.cpp \
+    MOsgNode.cpp \
     MOsgScene.cpp \
     MOsgModel.cpp \
     MOsgText.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     MOsgEventHandler.h \
     MOsgImage.h \
     MOsgLine.h \
+    MOsgNode.h \
     MOsgScene.h \
     MOsgText.h \
     MOsgWidget.h \

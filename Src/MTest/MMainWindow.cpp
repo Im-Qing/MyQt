@@ -14,7 +14,8 @@
 #include <osgText/Text>
 #include <osg/DrawPixels>
 
-#include "locale.h"
+#include "MOsg/MOsgImage.h"
+#include "MOsg/MOsgText.h"
 
 MMainWindow::MMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -164,7 +165,7 @@ void MMainWindow::sample_cow()
         m_pViewer->home();
     }
     //文字加模型，能设置模型尺寸
-    //if (false)
+    if (false)
     {
         //整个模型，文字加模型
         osg::ref_ptr<osg::Group> pModel = new osg::Group;
@@ -271,6 +272,19 @@ void MMainWindow::sample_cow()
             rot->setPosition(osg::Vec3(-(tarXWidth / 2), 0.0, -height));
             rot->setScale(osg::Vec3(xScale, zScale, zScale));
         }
+    }
+
+    //图片类测试
+    if(false)
+    {
+        MOsgImage* pImage = new MOsgImage("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
+        m_pMOsgScene->addNode(pImage);
+    }
+    //文本类测试
+    //if(false)
+    {
+        MOsgText* pText = new MOsgText("葵宝宝");
+        m_pMOsgScene->addNode(pText);
     }
 
     m_pViewer->home();
