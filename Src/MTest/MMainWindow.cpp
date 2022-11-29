@@ -13,6 +13,8 @@
 #include <osgGA/TerrainManipulator>
 #include <osgText/Text>
 #include <osg/DrawPixels>
+#include <osg/AutoTransform>
+#include <osg/ComputeBoundsVisitor>
 
 #include "MOsg/MOsgImage.h"
 #include "MOsg/MOsgText.h"
@@ -165,32 +167,59 @@ void MMainWindow::sample_cow()
         m_pViewer->home();
     }
     //文字加模型，能设置模型尺寸
-    if (false)
+    //if (false)
     {
         //整个模型，文字加模型
         osg::ref_ptr<osg::Group> pModel = new osg::Group;
         m_pMOsgScene->addChild(pModel.get());
 
         //尺寸，长宽高
-        float v = 0.3;
-        float len = v;
-        float width = v;
-        float height = v;
+        float v_ = 100.0;
+        float len = v_;
+        float width = v_;
+        float height = v_;
+        float percent = 0.1;
 
         //lod节点
         osg::ref_ptr<osg::LOD> pLodNode = new osg::LOD;
-        pModel->addChild(pLodNode.get());
+        //pModel->addChild(pLodNode.get());
 
         //3D模型
         {
+            pNode->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, osg::StateAttribute::ON);
+            pNode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
             osg::ref_ptr < osg::PositionAttitudeTransform > rot = new osg::PositionAttitudeTransform;
             rot->addChild(pNode.get());
+
+            osg::ComputeBoundsVisitor boundVisitor;
+            pNode->accept(boundVisitor);
+            osg::BoundingBox boundingBox = boundVisitor.getBoundingBox();
+
+            float x__ = boundingBox.xMax() - boundingBox.xMin();
+            float y__ = boundingBox.yMax() - boundingBox.yMin();
+            float z__ = boundingBox.zMax() - boundingBox.zMin();
+            float cx = boundingBox.center().x();
+            float cy = boundingBox.center().y();
+            float cz = boundingBox.center().z();
+
+            qDebug()<<"x__: "<<x__;
+            qDebug()<<"y__: "<<y__;
+            qDebug()<<"z__: "<<z__;
+            qDebug()<<"cx: "<<cx;
+            qDebug()<<"cy: "<<cy;
+            qDebug()<<"cz: "<<cz;
+
+
+            float zScale = v_ / z__;
+            qDebug()<<"zScale : "<<zScale;
+
             osg::BoundingSphere bb = pNode->getBound();
-            float scale = width / bb.radius();
+            float scale = v_ / bb.radius();
             qDebug()<<"radius : "<<bb.radius();
             qDebug()<<"scale : "<<scale;
-            rot->setScale(osg::Vec3(scale, scale, scale));
-            pLodNode->addChild(rot.get(), 0, 10);
+            rot->setPosition(osg::Vec3(-0, 0, 0));
+            rot->setScale(osg::Vec3(zScale, zScale, zScale));
+            //pLodNode->addChild(rot.get(), 30, FLT_MAX);
         }
         //图片
         {
@@ -198,10 +227,10 @@ void MMainWindow::sample_cow()
             //首先定义四个点
             osg::ref_ptr<osg::Vec3Array> v = new osg::Vec3Array;
             geom->setVertexArray( v.get() );
-            v->push_back( osg::Vec3( -1.f, 0.f, -1.f ) );
-            v->push_back( osg::Vec3( 1.f, 0.f, -1.f ) );
-            v->push_back( osg::Vec3( 1.f, 0.f, 1.f ) );
-            v->push_back( osg::Vec3( -1.f, 0.f, 1.f ) );
+            v->push_back( osg::Vec3( -0.5f, 0.f, -0.5f ) );
+            v->push_back( osg::Vec3( 0.5f, 0.f, -0.5f ) );
+            v->push_back( osg::Vec3( 0.5f, 0.f, 0.5f ) );
+            v->push_back( osg::Vec3( -0.5f, 0.f, 0.5f ) );
             //定义纹理坐标
             osg::ref_ptr<osg::Image> spImage = osgDB::readImageFile("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
             osg::ref_ptr <osg::Texture2D> spTexture2D = new osg::Texture2D(spImage);
@@ -216,6 +245,7 @@ void MMainWindow::sample_cow()
             osg::ref_ptr<osg::StateSet> spStateSet = geom->getOrCreateStateSet();
             spStateSet->setTextureAttributeAndModes(0, spTexture2D);
             spStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+            spStateSet->setMode(GL_RESCALE_NORMAL, osg::StateAttribute::ON);
             //要想看到png图片的透明效果，需要开启混合模式
             spStateSet->setMode(GL_BLEND,osg::StateAttribute::ON);
             spStateSet->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
@@ -225,52 +255,63 @@ void MMainWindow::sample_cow()
             //几何组结点
             osg::ref_ptr<osg::Geode> geode = new osg::Geode;
             geode->addDrawable( geom.get() );
+            //pLodNode->addChild(geode.get(), 0, FLT_MAX);
 
-            osg::ref_ptr < osg::PositionAttitudeTransform > rot = new osg::PositionAttitudeTransform;
-            rot->addChild(geode.get());
-            rot->setAttitude(osg::Quat(osg::PI_2, osg::Vec3(0.0, 0.0, 0.0)));
-            float textHeight = height;
-            osg::BoundingBox bb = geode->getBoundingBox();
-            qDebug()<<"x : "<<bb.xMax() - bb.xMin();
-            qDebug()<<"y : "<<bb.yMax() - bb.yMin();
-            qDebug()<<"z : "<<bb.zMax() - bb.zMin();
-            float zScale = textHeight / (bb.zMax() - bb.zMin());
-            //rot->setPosition(osg::Vec3(-(tarXWidth / 2), 0.0, -height));
-            rot->setScale(osg::Vec3(zScale, zScale, zScale));
+            osg::AutoTransform* at = new osg::AutoTransform;
+            at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+            at->setAutoScaleToScreen(true);
+            at->setMinimumScale(0);
+            at->setMaximumScale(FLT_MAX);
+//            at->setPosition(osg::Vec3(0.0, 0.0, 0.0));
+//            at->setScale(osg::Vec3(v_, v_, v_));
+            at->addChild(geode);
 
-            pLodNode->addChild(rot.get(), 10, FLT_MAX);
+            //pLodNode->addChild(at, 0, FLT_MAX);
+            pModel->addChild(at);
         }
         //文字
         {
-            osg::ref_ptr < osg::PositionAttitudeTransform > rot = new osg::PositionAttitudeTransform;
-            rot->setAttitude(osg::Quat(osg::PI_2, osg::Vec3(0.0, 0.0, 0.0)));
-
             osg::Geode* geode = new osg::Geode;
-            rot->addChild(geode);
+            //geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
             osgText::Font* font1 = osgText::readFontFile("Data/OpenSceneGraph-Data-3.0.0/fonts/FZSTK.TTF");
             osg::ref_ptr<osgText::Text> text = new osgText::Text;
             text->setFont(font1);
-            text->setPosition(osg::Vec3(0.0, 0.0, 0.0));
-            text->setCharacterSize(10.f);
-            text->setAxisAlignment(osgText::Text::XZ_PLANE);
+            text->setCharacterSize(25.f);
+            //text->setAxisAlignment(osgText::Text::XZ_PLANE);
+            text->setAlignment(osgText::Text::CENTER_CENTER);
             //text->setDrawMode(osgText::Text::TEXT | osgText::Text::ALIGNMENT | osgText::Text::BOUNDINGBOX | osgText::Text::FILLEDBOUNDINGBOX);
             QString str = QString::fromLocal8Bit("徐凯旋宝宝");
             text->setText(str.toStdWString().c_str());
             geode->addDrawable(text);
-            pModel->addChild(rot);
 
-            float textHeight = height / 3;
-            osg::BoundingBox bb = geode->getBoundingBox();
-            qDebug()<<"x : "<<bb.xMax() - bb.xMin();
-            qDebug()<<"y : "<<bb.yMax() - bb.yMin();
-            qDebug()<<"z : "<<bb.zMax() - bb.zMin();
-            float tarXWidth = ((bb.xMax() - bb.xMin()) / (bb.zMax() - bb.zMin()) * textHeight);
-            float zScale = textHeight / (bb.zMax() - bb.zMin());
-            float xScale = tarXWidth / (bb.xMax() - bb.xMin());
-            qDebug()<<"xScale : "<<xScale;
-            qDebug()<<"zScale : "<<zScale;
-            rot->setPosition(osg::Vec3(-(tarXWidth / 2), 0.0, -height));
-            rot->setScale(osg::Vec3(xScale, zScale, zScale));
+
+            osg::BoundingBox boundingBox = geode->getBoundingBox();
+
+            float x__ = boundingBox.xMax() - boundingBox.xMin();
+            float y__ = boundingBox.yMax() - boundingBox.yMin();
+            float z__ = boundingBox.zMax() - boundingBox.zMin();
+            float cx = boundingBox.center().x();
+            float cy = boundingBox.center().y();
+            float cz = boundingBox.center().z();
+
+            qDebug()<<"x__: "<<x__;
+            qDebug()<<"y__: "<<y__;
+            qDebug()<<"z__: "<<z__;
+            qDebug()<<"cx: "<<cx;
+            qDebug()<<"cy: "<<cy;
+            qDebug()<<"cz: "<<cz;
+
+            //text->setPosition(osg::Vec3(0.0, 0.0, -(v_/2 + z__)));
+
+            osg::AutoTransform* at = new osg::AutoTransform;
+            at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+            at->setAutoScaleToScreen(true);
+            at->setMinimumScale(0);
+            at->setMaximumScale(FLT_MAX);
+            at->setPosition(osg::Vec3(0.0, 0.0, -(v_/2 + z__)));
+            at->addChild(geode);
+
+            //pModel->addChild(at);
         }
     }
 
@@ -281,9 +322,9 @@ void MMainWindow::sample_cow()
         m_pMOsgScene->addNode(pImage);
     }
     //文本类测试
-    //if(false)
+    if(false)
     {
-        MOsgText* pText = new MOsgText("葵宝宝");
+        MOsgText* pText = new MOsgText(QString::fromLocal8Bit("葵宝宝"));
         m_pMOsgScene->addNode(pText);
     }
 

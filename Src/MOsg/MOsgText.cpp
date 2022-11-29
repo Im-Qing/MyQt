@@ -12,8 +12,7 @@ NS_MOsg::MOsgText::MOsgText(const QString &text, QObject *parent) : MOsgNode(par
     pText->setCharacterSize(10.f);
     pText->setAxisAlignment(osgText::Text::XZ_PLANE);
     //pText->setDrawMode(osgText::Text::TEXT | osgText::Text::ALIGNMENT | osgText::Text::BOUNDINGBOX | osgText::Text::FILLEDBOUNDINGBOX);
-    QString str = text.toLocal8Bit();
-    pText->setText(str.toStdWString().c_str());
+    pText->setText(text.toStdWString().c_str());
     pGeode->addDrawable(pText.get());
     //加到变换节点
     m_pTransform->addChild(pGeode.get());
