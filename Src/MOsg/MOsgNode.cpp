@@ -27,3 +27,8 @@ osg::Node *MOsgNode::get()
 {
     return m_pTransform.get();
 }
+
+const osg::BoundingBox &MOsgNode::getBoundingBox() const
+{
+    return osg::BoundingBox();
+}

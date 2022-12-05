@@ -4,20 +4,9 @@
 #include <QDebug>
 #include <QTextCodec>
 
-#include <osgGA/TrackballManipulator>
-#include <osgGA/FlightManipulator>
-#include <osgGA/DriveManipulator>
-#include <osgGA/KeySwitchMatrixManipulator>
-#include <osgGA/StateSetManipulator>
-#include <osgGA/AnimationPathManipulator>
-#include <osgGA/TerrainManipulator>
-#include <osgText/Text>
-#include <osg/DrawPixels>
-#include <osg/AutoTransform>
-#include <osg/ComputeBoundsVisitor>
-
 #include "MOsg/MOsgImage.h"
 #include "MOsg/MOsgText.h"
+#include "MOsg/MOsgModel.h"
 
 MMainWindow::MMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -167,14 +156,14 @@ void MMainWindow::sample_cow()
         m_pViewer->home();
     }
     //文字加模型，能设置模型尺寸
-    //if (false)
+    if (false)
     {
         //整个模型，文字加模型
         osg::ref_ptr<osg::Group> pModel = new osg::Group;
         m_pMOsgScene->addChild(pModel.get());
 
         //尺寸，长宽高
-        float v_ = 100.0;
+        float v_ = 1.0;
         float len = v_;
         float width = v_;
         float height = v_;
@@ -182,7 +171,7 @@ void MMainWindow::sample_cow()
 
         //lod节点
         osg::ref_ptr<osg::LOD> pLodNode = new osg::LOD;
-        //pModel->addChild(pLodNode.get());
+        pModel->addChild(pLodNode.get());
 
         //3D模型
         {
@@ -219,7 +208,7 @@ void MMainWindow::sample_cow()
             qDebug()<<"scale : "<<scale;
             rot->setPosition(osg::Vec3(-0, 0, 0));
             rot->setScale(osg::Vec3(zScale, zScale, zScale));
-            //pLodNode->addChild(rot.get(), 30, FLT_MAX);
+            pLodNode->addChild(rot.get(), 0, 30);
         }
         //图片
         {
@@ -255,29 +244,17 @@ void MMainWindow::sample_cow()
             //几何组结点
             osg::ref_ptr<osg::Geode> geode = new osg::Geode;
             geode->addDrawable( geom.get() );
-            //pLodNode->addChild(geode.get(), 0, FLT_MAX);
-
-            osg::AutoTransform* at = new osg::AutoTransform;
-            at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
-            at->setAutoScaleToScreen(true);
-            at->setMinimumScale(0);
-            at->setMaximumScale(FLT_MAX);
-//            at->setPosition(osg::Vec3(0.0, 0.0, 0.0));
-//            at->setScale(osg::Vec3(v_, v_, v_));
-            at->addChild(geode);
-
-            //pLodNode->addChild(at, 0, FLT_MAX);
-            pModel->addChild(at);
+            pLodNode->addChild(geode.get(), 30, FLT_MAX);
         }
         //文字
         {
             osg::Geode* geode = new osg::Geode;
-            //geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+            geode->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
             osgText::Font* font1 = osgText::readFontFile("Data/OpenSceneGraph-Data-3.0.0/fonts/FZSTK.TTF");
             osg::ref_ptr<osgText::Text> text = new osgText::Text;
             text->setFont(font1);
-            text->setCharacterSize(25.f);
-            //text->setAxisAlignment(osgText::Text::XZ_PLANE);
+            text->setCharacterSize(0.25f);
+            text->setAxisAlignment(osgText::Text::XZ_PLANE);
             text->setAlignment(osgText::Text::CENTER_CENTER);
             //text->setDrawMode(osgText::Text::TEXT | osgText::Text::ALIGNMENT | osgText::Text::BOUNDINGBOX | osgText::Text::FILLEDBOUNDINGBOX);
             QString str = QString::fromLocal8Bit("徐凯旋宝宝");
@@ -301,31 +278,45 @@ void MMainWindow::sample_cow()
             qDebug()<<"cy: "<<cy;
             qDebug()<<"cz: "<<cz;
 
-            //text->setPosition(osg::Vec3(0.0, 0.0, -(v_/2 + z__)));
+            text->setPosition(osg::Vec3(0.0, 0.0, -(v_/2 + z__)));
 
-            osg::AutoTransform* at = new osg::AutoTransform;
-            at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
-            at->setAutoScaleToScreen(true);
-            at->setMinimumScale(0);
-            at->setMaximumScale(FLT_MAX);
-            at->setPosition(osg::Vec3(0.0, 0.0, -(v_/2 + z__)));
-            at->addChild(geode);
+//            osg::AutoTransform* at = new osg::AutoTransform;
+//            at->setAutoRotateMode(osg::AutoTransform::ROTATE_TO_SCREEN);
+//            at->setAutoScaleToScreen(true);
+//            at->setMinimumScale(0);
+//            at->setMaximumScale(FLT_MAX);
+//            //at->setPosition(osg::Vec3(0.0, 0.0, -(v_/2 + z__)));
+//            at->addChild(geode);
 
-            //pModel->addChild(at);
+            pModel->addChild(geode);
         }
     }
 
     //图片类测试
-    if(false)
+    //if(false)
     {
-        MOsgImage* pImage = new MOsgImage("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
+        MOsgImage* pImage = new MOsgImage("", this);
+        pImage->setImageFile("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
         m_pMOsgScene->addNode(pImage);
+        pImage->setPos(osg::Vec3(0.0, 0.0, 0.0));
     }
     //文本类测试
-    if(false)
+    //if(false)
     {
         MOsgText* pText = new MOsgText(QString::fromLocal8Bit("葵宝宝"));
         m_pMOsgScene->addNode(pText);
+        pText->setPos(osg::Vec3(1.5, 0.0, 0.0));
+    }
+    //模型类测试
+    //if(false)
+    {
+        MOsgModel* pModel = new MOsgModel(1, this);
+        pModel->setName(QString::fromLocal8Bit("葵宝宝"));
+        pModel->set2DImg("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
+        pModel->set3DModel("Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
+        m_pMOsgScene->addNode(pModel);
+        pModel->setScale(osg::Vec3(2.0, 2.0, 2.0));
+        pModel->setPos(osg::Vec3(4.0, 0.0, 0.0));
     }
 
     m_pViewer->home();
