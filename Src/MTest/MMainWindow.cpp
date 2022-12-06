@@ -7,6 +7,7 @@
 #include "MOsg/MOsgImage.h"
 #include "MOsg/MOsgText.h"
 #include "MOsg/MOsgModel.h"
+#include "MOsg/MOsgLine.h"
 
 MMainWindow::MMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,12 +20,11 @@ MMainWindow::MMainWindow(QWidget *parent)
     //m_pTimer->start(50);
     connect(m_pTimer, &QTimer::timeout,this,&MMainWindow::slot_timeout);
 
-    m_pMOsgScene = new MOsgScene(this);
+    m_pMOsgScene = new MOsgScene(false, this);
     m_pMOsgWidget = new MOsgWidget(m_pMOsgScene, this);
     m_pViewer = m_pMOsgWidget->getOsgViewer();
     ui->gridLayout->addWidget(m_pMOsgWidget);
     sample_cow();
-    m_pMOsgScene->setOsgView(m_pMOsgWidget->getOsgViewer());
 
     connect(ui->actiontest1, &QAction::triggered, this, &MMainWindow::slot_test1);
     connect(ui->actiontest2, &QAction::triggered, this, &MMainWindow::slot_test2);
@@ -55,22 +55,8 @@ void MMainWindow::sample_cow()
     //添加路径记录
     m_pViewer->addEventHandler(new osgViewer::RecordCameraPathHandler);
 
-
     osg::ref_ptr<osg::Node> pNode = osgDB::readNodeFile("Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
 
-    //tran
-    if(false)
-    {
-        osg::ref_ptr < osg::PositionAttitudeTransform > rot = new osg::PositionAttitudeTransform;
-        rot->setPosition(osg::Vec3(2.0, 5.0, 0.0));
-        rot->setAttitude(osg::Quat(osg::PI_2, osg::Vec3(0.0, 1.0, 1.0)));
-        rot->setScale(osg::Vec3(0.1, 0.1, 0.1));
-        rot->addChild(pNode.get());
-        m_pMOsgScene->addChild(rot.get());
-
-        osg::BoundingSphere bb = rot->getBound();
-        qDebug()<<"radius : "<<bb.radius();
-    }
     //显示文字
     if (false)
     {
@@ -291,9 +277,41 @@ void MMainWindow::sample_cow()
             pModel->addChild(geode);
         }
     }
+    //线
+    if (false)
+    {
+        osg::ref_ptr<osg::Geode> geode = new osg::Geode;
+        m_pMOsgScene->addChild(geode.get());
+        //设置顶点数组
+        osg::ref_ptr<osg::Vec3Array> vex = new osg::Vec3Array;
+        vex->push_back(osg::Vec3(-3.0, 0.0, 0.0));
+        vex->push_back(osg::Vec3(3.0, 0.0, 0.0));
+        vex->push_back(osg::Vec3(0.0, 5.0, 0.0));
+        vex->push_back(osg::Vec3(0.0, 0.0, 5.0));
+
+        osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
+        geometry->setVertexArray(vex);
+
+        //设置颜色数组
+        osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+
+        colors->push_back(osg::Vec4(1.0, 1.0, 0.0, 0.5));
+        geometry->setColorArray(colors);
+        geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+
+        //设置顶点关联方式
+        geometry->addPrimitiveSet(new osg::DrawArrays( osg::PrimitiveSet::LINE_LOOP, 0, 4 ) );
+
+        //设置线宽
+        osg::ref_ptr<osg::LineWidth> lw = new osg::LineWidth(6.0);
+        geometry->getOrCreateStateSet()->setAttribute(lw, osg::StateAttribute::ON);
+        geometry->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+
+        geode->addDrawable(geometry);
+    }
 
     //图片类测试
-    //if(false)
+    if(false)
     {
         MOsgImage* pImage = new MOsgImage("", this);
         pImage->setImageFile("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
@@ -301,14 +319,14 @@ void MMainWindow::sample_cow()
         pImage->setPos(osg::Vec3(0.0, 0.0, 0.0));
     }
     //文本类测试
-    //if(false)
+    if(false)
     {
         MOsgText* pText = new MOsgText(QString::fromLocal8Bit("葵宝宝"));
         m_pMOsgScene->addNode(pText);
         pText->setPos(osg::Vec3(1.5, 0.0, 0.0));
     }
     //模型类测试
-    //if(false)
+    if(false)
     {
         MOsgModel* pModel = new MOsgModel(1, this);
         pModel->setName(QString::fromLocal8Bit("葵宝宝"));
@@ -317,6 +335,57 @@ void MMainWindow::sample_cow()
         m_pMOsgScene->addNode(pModel);
         pModel->setScale(osg::Vec3(2.0, 2.0, 2.0));
         pModel->setPos(osg::Vec3(4.0, 0.0, 0.0));
+    }
+    //线类测试
+    if(false)
+    {
+        MOsgLine* pLine = new MOsgLine(1, this);
+        m_pMOsgScene->addNode(pLine);
+        //设置顶点数组
+        osg::ref_ptr<osg::Vec3Array> vex = new osg::Vec3Array;
+        vex->push_back(osg::Vec3(-3.0, 0.0, 0.0));
+        vex->push_back(osg::Vec3(3.0, 0.0, 0.0));
+        vex->push_back(osg::Vec3(0.0, 5.0, 0.0));
+        vex->push_back(osg::Vec3(0.0, 0.0, 5.0));
+        pLine->setLineVertexArray(vex);
+        //设置颜色
+        pLine->setLineColor(osg::Vec4(28.0/255, 116.0/255, 28.0/255, 1.0));
+        //设置线宽
+        pLine->setLineWidth(2);
+    }
+    //地球类测试
+    //if(false)
+    {
+        //地球节点
+        m_pMOsgScene->setEarthFilePath("Data/OpenSceneGraph-Data-3.0.0/Images/land_shallow_topo_2048.jpg");
+
+        //在北京位置添加模型
+        MOsgModel* pModel = new MOsgModel(1, this);
+        pModel->setName(QString::fromLocal8Bit("葵宝宝"));
+        pModel->set2DImg("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
+        pModel->set3DModel("Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
+        m_pMOsgScene->addNode(pModel);
+        pModel->setScale(osg::Vec3(300000.0f, 300000.0f, 300000.0f));
+        pModel->setPos(osg::Vec3(116.23128, 40.22077, 200000.0));
+
+        //绘制线
+        MOsgLine* pLine = new MOsgLine(2, this);
+        m_pMOsgScene->addNode(pLine);
+        //设置顶点数组
+        osg::ref_ptr<osg::Vec3Array> vex = new osg::Vec3Array;
+        for(int i = -90; i<=90; i+=2)
+        {
+            vex->push_back(osg::Vec3(116.23128, i*1.0, 1000000.0));
+        }
+        for(int i = 90; i>=-90; i-=2)
+        {
+            vex->push_back(osg::Vec3(-116.23128, i*1.0, 1000000.0));
+        }
+        pLine->setLineVertexArray(vex);
+        //设置颜色
+        pLine->setLineColor(osg::Vec4(1.0, 1.0, 0.0, 1.0));
+        //设置线宽
+        pLine->setLineWidth(2);
     }
 
     m_pViewer->home();

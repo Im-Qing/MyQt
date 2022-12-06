@@ -10,7 +10,12 @@ MOsgNode::MOsgNode(QObject *parent) : QObject(parent)
 
 void MOsgNode::setPos(const osg::Vec3 &pos)
 {
-    m_pTransform->setPosition(pos);
+    osg::Vec3 pos1 = pos;
+    if(m_pOsgScene && m_pOsgScene->isAsEarth())
+    {
+        pos1 = m_pOsgScene->convertLatLongHeightToXYZ(pos);
+    }
+    m_pTransform->setPosition(pos1);
 }
 
 void MOsgNode::setScale(const osg::Vec3 &scale)

@@ -8,12 +8,12 @@ NS_MOsg::MOsgModel::MOsgModel(int id, QObject* parent) : MOsgNode(parent)
     m_pLodNode = new osg::LOD;
     //图片节点
     m_p2DImgNode = new MOsgImage("");
-    m_pLodNode->addChild(m_p2DImgNode->get(), 10, FLT_MAX);
+    m_pLodNode->addChild(m_p2DImgNode->get(), 30, FLT_MAX);
     //3d模型
     m_p3DModelNodeRot = new osg::PositionAttitudeTransform;
     m_p3DModelNode = new osg::Node;
     m_p3DModelNodeRot->addChild(m_p3DModelNode.get());
-    m_pLodNode->addChild(m_p3DModelNodeRot.get(), 0, 10);
+    m_pLodNode->addChild(m_p3DModelNodeRot.get(), 0, 30);
     //文本
     m_pTextNode = new MOsgText("", this);
     //加入到变换节点
@@ -56,6 +56,7 @@ void NS_MOsg::MOsgModel::set3DModel(const QString& modelPath)
     m_3DModelPath = modelPath;
     m_p3DModelNodeRot->removeChild(m_p3DModelNode.get());
     m_p3DModelNode = osgDB::readNodeFile(modelPath.toStdString());
+    m_p3DModelNode->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, osg::StateAttribute::ON); //给obj增加法线 不加就黑色物体
     osg::ComputeBoundsVisitor boundVisitor;
     m_p3DModelNode->accept(boundVisitor);
     osg::BoundingBox boundingBox = boundVisitor.getBoundingBox();

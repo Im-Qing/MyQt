@@ -20,40 +20,65 @@ char fragShader[] = {
     "}\n"
 };
 
-#include <osgDB/FileUtils>
-#include <osg/Texture2D>
-#include <osg/CoordinateSystemNode>
-
-osg::Node* createEarth()
-{
-    osg::TessellationHints* hints = new osg::TessellationHints;
-    hints->setDetailRatio(5.0f);
-
-
-    osg::ShapeDrawable* sd = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0,0.0,0.0), osg::WGS_84_RADIUS_POLAR), hints);
-
-    osg::Geode* geode = new osg::Geode;
-    geode->addDrawable(sd);
-
-    std::string filename = osgDB::findDataFile("D:/Code/OpenSceneGraph-Data-3.0.0/Images/land_shallow_topo_2048.jpg");
-    geode->getOrCreateStateSet()->setTextureAttributeAndModes(0, new osg::Texture2D(osgDB::readRefImageFile(filename)));
-
-    osg::CoordinateSystemNode* csn = new osg::CoordinateSystemNode;
-    csn->setEllipsoidModel(new osg::EllipsoidModel());
-    csn->addChild(geode);
-
-    return csn;
-
-}
-
-MOsgScene::MOsgScene(QObject *parent) : QObject(parent) , osg::Group()
+MOsgScene::MOsgScene(bool asEarth, QObject *parent) : QObject(parent) , osg::Group()
+  ,m_asEarth(asEarth)
 {
     setName("root");
 }
 
-#include <osg/ProxyNode>
+void MOsgScene::setEarthFilePath(const QString &filePath)
+{
+    m_asEarth = true;
+    //作为地球
+    {
+        osg::TessellationHints* hints = new osg::TessellationHints;
+        hints->setDetailRatio(5.0f);
 
-void MOsgScene::addNode(const QString &filePath)
+        osg::ShapeDrawable* sd = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0,0.0,0.0), osg::WGS_84_RADIUS_POLAR), hints);
+        osg::Geode* geode = new osg::Geode;
+        geode->addDrawable(sd);
+
+        geode->getOrCreateStateSet()->setTextureAttributeAndModes(0, new osg::Texture2D(osgDB::readRefImageFile(filePath.toStdString())));
+
+        m_pCsn = new osg::CoordinateSystemNode;
+        m_pCsn->setEllipsoidModel(new osg::EllipsoidModel());
+        m_pCsn->addChild(geode);
+        //加入到变换节点
+        addChild(m_pCsn.get());
+    }
+}
+
+void MOsgScene::addNode(MOsgNode *node)
+{
+    if(m_asEarth)     //作为地球
+    {
+        m_pCsn->addChild(node->get());
+    }
+    else
+    {
+        addChild(node->get());
+    }
+    node->setScene(this);
+}
+
+osg::Vec3 MOsgScene::convertLatLongHeightToXYZ(const osg::Vec3& geoPos)
+{
+    osg::Vec3 xyz;
+    if (m_asEarth && m_pCsn)
+    {
+        double lon = geoPos.x();
+        double lat = geoPos.y();
+        lon = -(180 - lon);
+        double height = geoPos.z();
+        double X,Y,Z;
+        m_pCsn->getEllipsoidModel()->convertLatLongHeightToXYZ( osg::DegreesToRadians(lat), osg::DegreesToRadians(lon), height, X, Y, Z);
+        xyz.set(X, Y, Z);
+    }
+    return xyz;
+}
+
+
+void MOsgScene::test(const QString &filePath)
 {
     //节点访问器
     if(false)
@@ -99,60 +124,24 @@ void MOsgScene::addNode(const QString &filePath)
         addChild(createShape());
     }
 
-    //地球
-    //if(false)
-    {
-        osg::ref_ptr<osg::Node> earthNode = createEarth();
-        addChild(earthNode.get());
-
-        //添加牛到北京的位置
-        double lon = 116.23128;
-        double lat = 40.22077;
-        lon = -(180 - lon);
-        double height = 1000000.0;
-        double X,Y,Z;
-        osg::CoordinateSystemNode* csn = dynamic_cast<osg::CoordinateSystemNode*>(earthNode.get());
-        if (csn)
-        {
-            csn->getEllipsoidModel()->convertLatLongHeightToXYZ( osg::DegreesToRadians(lat), osg::DegreesToRadians(lon), height, X, Y, Z);
-            qDebug()<<" X,Y,Z: "<< X<<Y<<Z;
-
-            osg::ref_ptr<osg::Node> pNode1 = osgDB::readNodeFile("../../Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
-            pNode1 ->getOrCreateStateSet()->setMode(GL_RESCALE_NORMAL, osg::StateAttribute::ON);//给obj增加法线 不加就黑色物体
-
-            osg::ref_ptr < osg::PositionAttitudeTransform > rot = new osg::PositionAttitudeTransform;
-            //rot->setAttitude(osg::Quat(osg::PI_2, osg::Vec3(0.0, 0.0, 1.0)));
-            rot->setScale(osg::Vec3(60000.0f, 60000.0f, 60000.0f));
-            rot->setPosition(osg::Vec3(X,Y,Z));
-
-//            osg::ref_ptr < osg::MatrixTransform> scale = new osg::MatrixTransform ;
-//            scale ->setMatrix(
-//                        osg::Matrix::rotate(osg::DegreesToRadians(0.0), 1, 0, 0)*
-//                        osg::Matrix::scale(300000.0f, 300000.0f, 300000.0f)*
-//                        osg::Matrix::translate(-997760, -6.29961e+06, 0)) ;
-
-            rot ->addChild(pNode1.get());
-            csn->addChild(rot.get());
-        }
-    }
 
     //pick
     if(false)
     {
-        MOsgEventHandler* pMOsgEventHandler = new MOsgEventHandler(this);
-        m_pViewer->addEventHandler(pMOsgEventHandler);
-        osg::ref_ptr<osg::Node> cessna = osgDB::readNodeFile("../../Data/OpenSceneGraph-Data-3.0.0/cessna.osgt") ;
-        osg::ref_ptr < osg::PositionAttitudeTransform > rot = new osg::PositionAttitudeTransform;
-        rot->setPosition(osg::Vec3(0.0, 0.0, 0.0));
-        rot->setAttitude(osg::Quat(osg::PI_2, osg::Vec3(0.0, 0.0, 1.0)));
-        rot ->addChild(cessna.get()) ;
-        addChild(rot.get());
-        osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile("../../Data/OpenSceneGraph-Data-3.0.0/cow.osgt") ;
-        osg::ref_ptr<osgFX::Scribe> sc = new osgFX::Scribe();
-        sc->setWireframeColor(osg::Vec4(1, 0, 0, 1));
-        sc->setWireframeLineWidth(10);
-        sc->addChild(cow.get());
-        addChild(sc.get());
+//        MOsgEventHandler* pMOsgEventHandler = new MOsgEventHandler(this);
+//        m_pViewer->addEventHandler(pMOsgEventHandler);
+//        osg::ref_ptr<osg::Node> cessna = osgDB::readNodeFile("../../Data/OpenSceneGraph-Data-3.0.0/cessna.osgt") ;
+//        osg::ref_ptr < osg::PositionAttitudeTransform > rot = new osg::PositionAttitudeTransform;
+//        rot->setPosition(osg::Vec3(0.0, 0.0, 0.0));
+//        rot->setAttitude(osg::Quat(osg::PI_2, osg::Vec3(0.0, 0.0, 1.0)));
+//        rot ->addChild(cessna.get()) ;
+//        addChild(rot.get());
+//        osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile("../../Data/OpenSceneGraph-Data-3.0.0/cow.osgt") ;
+//        osg::ref_ptr<osgFX::Scribe> sc = new osgFX::Scribe();
+//        sc->setWireframeColor(osg::Vec4(1, 0, 0, 1));
+//        sc->setWireframeLineWidth(10);
+//        sc->addChild(cow.get());
+//        addChild(sc.get());
     }
 
     //着色器
@@ -216,13 +205,6 @@ void MOsgScene::addNode(const QString &filePath)
 
         addChild(pSw.get());
     }
-
-    //m_pViewer->getCameraManipulator()->home(0.0);
-}
-
-void MOsgScene::addNode(MOsgNode *node)
-{
-    addChild(node->get());
 }
 
 osg::ref_ptr<osg::Node> MOsgScene::createQuad()

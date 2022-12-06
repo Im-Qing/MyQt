@@ -1,6 +1,5 @@
 #ifndef MOSGIMAGE_H
 #define MOSGIMAGE_H
-#include "MOsg_global.h"
 #include "MOsgNode.h"
 
 namespace NS_MOsg
