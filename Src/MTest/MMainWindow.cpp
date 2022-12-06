@@ -373,13 +373,9 @@ void MMainWindow::sample_cow()
         m_pMOsgScene->addNode(pLine);
         //设置顶点数组
         osg::ref_ptr<osg::Vec3Array> vex = new osg::Vec3Array;
-        for(int i = -90; i<=90; i+=2)
+        for(int i = -180; i<=180; i+=2)
         {
             vex->push_back(osg::Vec3(116.23128, i*1.0, 1000000.0));
-        }
-        for(int i = 90; i>=-90; i-=2)
-        {
-            vex->push_back(osg::Vec3(-116.23128, i*1.0, 1000000.0));
         }
         pLine->setLineVertexArray(vex);
         //设置颜色
