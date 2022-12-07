@@ -21,6 +21,7 @@
 #include <osg/AutoTransform>
 #include <osg/ProxyNode>
 #include <osg/CoordinateSystemNode>
+#include <osg/BlendFunc>
 
 #include <osgGA/TrackballManipulator>
 #include <osgGA/FlightManipulator>

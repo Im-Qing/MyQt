@@ -9,6 +9,7 @@
 #include "MOsg/MOsgModel.h"
 #include "MOsg/MOsgLine.h"
 #include "MOsg/MOsgEarthNode.h"
+#include "MOsg/MOsgCone.h"
 
 MMainWindow::MMainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -327,15 +328,15 @@ void MMainWindow::sample_cow()
         pText->setPos(MPos(1.5, 0.0, 0.0));
     }
     //模型类测试
-    if(false)
+    //if(false)
     {
         MOsgModel* pModel = new MOsgModel(1, this);
         pModel->setName(QString::fromLocal8Bit("葵宝宝"));
         pModel->set2DImg("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
         pModel->set3DModel("Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
         m_pMOsgScene->addNode(pModel);
-        pModel->setScale(osg::Vec3(2.0, 2.0, 2.0));
-        pModel->setPos(MPos(4.0, 0.0, 0.0));
+        pModel->setScale(osg::Vec3(0.5, 0.5, 0.5));
+        //pModel->setPos(MPos(4.0, 0.0, 0.0));
     }
     //线类测试
     if(false)
@@ -354,8 +355,15 @@ void MMainWindow::sample_cow()
         //设置线宽
         pLine->setLineWidth(2);
     }
-    //地球类测试
+    //锥体测试
     //if(false)
+    {
+        MOsgCone* pCone = new MOsgCone(this);
+        pCone->setScale(osg::Vec3(2, 2, 2));
+        m_pMOsgScene->addNode(pCone);
+    }
+    //地球类测试
+    if(false)
     {
         //地球节点
         MOsgEarthNode* pOsgEarthNode = new MOsgEarthNode(this);
