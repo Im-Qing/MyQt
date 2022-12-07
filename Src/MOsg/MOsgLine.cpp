@@ -39,24 +39,26 @@ void MOsgLine::setLineWidth(int width)
     m_pGeometry->getOrCreateStateSet()->setAttribute(lw, osg::StateAttribute::ON);
 }
 
-void MOsgLine::setLineVertexArray(osg::ref_ptr<osg::Vec3Array> vex)
+void MOsgLine::setLineVertexArray(const QList<MPos>& vex)
 {
+    MOsg mosg;
     //设置顶点数组
-    if(m_pOsgScene && m_pOsgScene->isAsEarth())
+    osg::ref_ptr<osg::Vec3Array> vex1 = new osg::Vec3Array;
+    for(int i = 0; i<vex.size(); i++)
     {
-        osg::ref_ptr<osg::Vec3Array> vex1 = new osg::Vec3Array;
-        for(int i = 0; i<vex->size(); i++)
+        MPos pos = vex[i];
+        if(pos.m_isGeoPos)
         {
-            osg::Vec3 pos = m_pOsgScene->convertLatLongHeightToXYZ(vex->at(i));
-            vex1->push_back(pos);
+            osg::Vec3 pos1 = mosg.convertLatLongHeightToXYZ(pos);
+            vex1->push_back(pos1);
         }
-        m_pGeometry->setVertexArray(vex1);
+        else
+        {
+            vex1->push_back(osg::Vec3(pos.m_x, pos.m_y, pos.m_z));
+        }
     }
-    else
-    {
-        m_pGeometry->setVertexArray(vex);
-    }
+    m_pGeometry->setVertexArray(vex1);
     //设置顶点关联方式
-    osg::ref_ptr<osg::PrimitiveSet> primitiveSet = new osg::DrawArrays(osg::PrimitiveSet::LINE_STRIP, 0, vex->size());
+    osg::ref_ptr<osg::PrimitiveSet> primitiveSet = new osg::DrawArrays(osg::PrimitiveSet::LINE_STRIP, 0, vex.size());
     m_pGeometry->addPrimitiveSet(primitiveSet);
 }

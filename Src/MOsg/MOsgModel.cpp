@@ -42,7 +42,7 @@ void NS_MOsg::MOsgModel::setName(const QString& name)
 //    qDebug()<<"cz: "<<cz;
 
     float v_ = 1.0;
-    m_pTextNode->setPos(osg::Vec3(0.0, 0.0, -(v_/2 + z__)));
+    m_pTextNode->setPos(MPos(0.0, 0.0, -(v_/2 + z__)));
 }
 
 void NS_MOsg::MOsgModel::set2DImg(const QString& imgPath)

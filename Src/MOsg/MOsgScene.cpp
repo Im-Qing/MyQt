@@ -20,63 +20,15 @@ char fragShader[] = {
     "}\n"
 };
 
-MOsgScene::MOsgScene(bool asEarth, QObject *parent) : QObject(parent) , osg::Group()
-  ,m_asEarth(asEarth)
+MOsgScene::MOsgScene(QObject *parent) : QObject(parent) , osg::Group()
 {
     setName("root");
 }
 
-void MOsgScene::setEarthFilePath(const QString &filePath)
-{
-    m_asEarth = true;
-    //作为地球
-    {
-        osg::TessellationHints* hints = new osg::TessellationHints;
-        hints->setDetailRatio(5.0f);
-
-        osg::ShapeDrawable* sd = new osg::ShapeDrawable(new osg::Sphere(osg::Vec3(0.0,0.0,0.0), osg::WGS_84_RADIUS_POLAR), hints);
-        osg::Geode* geode = new osg::Geode;
-        geode->addDrawable(sd);
-
-        geode->getOrCreateStateSet()->setTextureAttributeAndModes(0, new osg::Texture2D(osgDB::readRefImageFile(filePath.toStdString())));
-
-        m_pCsn = new osg::CoordinateSystemNode;
-        m_pCsn->setEllipsoidModel(new osg::EllipsoidModel());
-        m_pCsn->addChild(geode);
-        //加入到变换节点
-        addChild(m_pCsn.get());
-    }
-}
-
 void MOsgScene::addNode(MOsgNode *node)
 {
-    if(m_asEarth)     //作为地球
-    {
-        m_pCsn->addChild(node->get());
-    }
-    else
-    {
-        addChild(node->get());
-    }
-    node->setScene(this);
+    addChild(node->get());
 }
-
-osg::Vec3 MOsgScene::convertLatLongHeightToXYZ(const osg::Vec3& geoPos)
-{
-    osg::Vec3 xyz;
-    if (m_asEarth && m_pCsn)
-    {
-        double lon = geoPos.x();
-        double lat = geoPos.y();
-        lon = -(180 - lon);
-        double height = geoPos.z();
-        double X,Y,Z;
-        m_pCsn->getEllipsoidModel()->convertLatLongHeightToXYZ( osg::DegreesToRadians(lat), osg::DegreesToRadians(lon), height, X, Y, Z);
-        xyz.set(X, Y, Z);
-    }
-    return xyz;
-}
-
 
 void MOsgScene::test(const QString &filePath)
 {

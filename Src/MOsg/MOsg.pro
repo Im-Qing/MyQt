@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     MOsg.cpp \
+    MOsgEarthNode.cpp \
     MOsgEventHandler.cpp \
     MOsgImage.cpp \
     MOsgLine.cpp \
@@ -28,6 +29,7 @@ SOURCES += \
     MOsgWidget.cpp
 
 HEADERS += \
+    MOsgEarthNode.h \
     MOsgEventHandler.h \
     MOsgImage.h \
     MOsgLine.h \

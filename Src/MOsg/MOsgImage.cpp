@@ -30,7 +30,6 @@ MOsgImage::MOsgImage(const QString& filePath, QObject *parent) : MOsgNode(parent
     m_pTexture2D->setImage(m_pImage);
     m_pTexture2D->setUnRefImageDataAfterApply(true);
     osg::ref_ptr<osg::StateSet> spStateSet = m_pGeom->getOrCreateStateSet();
-    spStateSet->setUpdateCallback(new CallBack);
     spStateSet->setTextureAttributeAndModes(0, m_pTexture2D);
     spStateSet->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
     //要想看到png图片的透明效果，需要开启混合模式

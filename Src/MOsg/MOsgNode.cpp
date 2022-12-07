@@ -8,12 +8,13 @@ MOsgNode::MOsgNode(QObject *parent) : QObject(parent)
     m_pTransform = new osg::PositionAttitudeTransform;
 }
 
-void MOsgNode::setPos(const osg::Vec3 &pos)
+void MOsgNode::setPos(const MPos &pos)
 {
-    osg::Vec3 pos1 = pos;
-    if(m_pOsgScene && m_pOsgScene->isAsEarth())
+    MOsg mosg;
+    osg::Vec3 pos1(pos.m_x, pos.m_y, pos.m_z);
+    if(pos.m_isGeoPos)
     {
-        pos1 = m_pOsgScene->convertLatLongHeightToXYZ(pos);
+        pos1 = mosg.convertLatLongHeightToXYZ(pos);
     }
     m_pTransform->setPosition(pos1);
 }

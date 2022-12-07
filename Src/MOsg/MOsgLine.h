@@ -15,7 +15,7 @@ public:
 public:
     void setLineColor(osg::Vec4 rgba);
     void setLineWidth(int width);
-    void setLineVertexArray(osg::ref_ptr<osg::Vec3Array> vex);
+    void setLineVertexArray(const QList<MPos>& vex);
 private:
     int m_id;
     osg::ref_ptr<osg::Geometry> m_pGeometry;

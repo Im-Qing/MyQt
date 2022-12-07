@@ -38,10 +38,19 @@
 
 namespace NS_MOsg
 {
-    struct MGeoPos      //��γ������
+    struct MPos      //坐标
     {
-        double lon;     //��
-        double lat;     //��
-        double height;  //km
+        bool m_isGeoPos = false;      //是否是经纬高坐标，若为true，则x,y,z分别表示经度(度)，纬度(度)，高度(米)
+        double m_x;
+        double m_y;
+        double m_z;
+
+        MPos(double x, double y, double z, bool isGeoPos = false)
+        {
+            m_x = x;
+            m_y = y;
+            m_z = z;
+            m_isGeoPos = isGeoPos;
+        }
     };
 }
