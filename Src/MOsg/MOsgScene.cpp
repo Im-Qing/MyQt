@@ -4,19 +4,18 @@
 using namespace NS_MOsg;
 
 char vertexShader[] = {
-    "varying vec4 color;\n"
     "void main(void ){\n"
-        "color = gl_Vertex;\n"
+        "gl_TexCoord[0] = gl_MultiTexCoord0;\n"
         "gl_Position = gl_ModelViewProjectionMatrix*gl_Vertex;\n"
     "}\n"
 };
 char fragShader[] = {
-    "varying vec4 color;\n"
     "uniform vec4 mainColor;\n"
+    "uniform sampler2D baseTexture;\n"
     "void main(void){\n"
-    "	//gl_FragColor = clamp(color,0.0,1.0);\n"
-    "   //color = vec4(1.0, 1.0, 1.0, 1.0);\n"
-    "	gl_FragColor = color;\n"
+    "   vec2 coord = gl_TexCoord[0].xy;\n"
+    "   vec4 C = texture2D(baseTexture, coord);\n"
+    "	gl_FragColor = C;\n"
     "}\n"
 };
 
@@ -97,19 +96,22 @@ void MOsgScene::test(const QString &filePath)
     }
 
     //着色器
-    if(false)
+    //if(false)
     {
-        osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile("../../Data/OpenSceneGraph-Data-3.0.0/cow.osgt") ;
+        osg::ref_ptr<osg::Node> cow = osgDB::readNodeFile("Data/OpenSceneGraph-Data-3.0.0/Ship1.ive") ;
         osg::StateSet * ss = cow->getOrCreateStateSet();
         osg::Program * program = new osg::Program;
-        program->addShader(new osg::Shader(osg::Shader::FRAGMENT,fragShader));
-        program->addShader(new osg::Shader(osg::Shader::VERTEX,vertexShader));
+//        program->addShader(new osg::Shader(osg::Shader::FRAGMENT,fragShader));
+//        program->addShader(new osg::Shader(osg::Shader::VERTEX,vertexShader));
+        program->addShader(osgDB::readRefShaderFile("Data/OpenSceneGraph-Data-3.0.0/shaders/basic.vert"));
+        program->addShader(osgDB::readRefShaderFile("Data/OpenSceneGraph-Data-3.0.0/shaders/basic.frag"));
 
         osg::ref_ptr<osg::Uniform> mainColor = new osg::Uniform("mainColor", osg::Vec4(1.0, 0.0, 1.0, 1.0));
         mainColor->setUpdateCallback(new MMainColorCallback);
         ss->addUniform(mainColor.get());
 
-        ss->setAttributeAndModes(program/*,osg::StateAttribute::ON*/);
+        ss->setAttributeAndModes(program, osg::StateAttribute::ON);
+        ss->setMode(GL_LIGHTING, osg::StateAttribute::OFF | osg::StateAttribute::OVERRIDE);
         addChild(cow.get());
     }
 

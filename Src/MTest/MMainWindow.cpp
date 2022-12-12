@@ -26,7 +26,8 @@ MMainWindow::MMainWindow(QWidget *parent)
     m_pMOsgWidget = new MOsgWidget(m_pMOsgScene, this);
     m_pViewer = m_pMOsgWidget->getOsgViewer();
     ui->gridLayout->addWidget(m_pMOsgWidget);
-    sample_cow();
+    //slot_test1(false);
+    //slot_test2(false);
 
     connect(ui->actiontest1, &QAction::triggered, this, &MMainWindow::slot_test1);
     connect(ui->actiontest2, &QAction::triggered, this, &MMainWindow::slot_test2);
@@ -331,9 +332,9 @@ void MMainWindow::sample_cow()
     //if(false)
     {
         MOsgModel* pModel = new MOsgModel(1, this);
-        pModel->setName(QString::fromLocal8Bit("葵宝宝"));
+        pModel->setName(QString::fromLocal8Bit("小伙纸"));
         pModel->set2DImg("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
-        pModel->set3DModel("Data/OpenSceneGraph-Data-3.0.0/cow.osgt");
+        pModel->set3DModel("Data/OpenSceneGraph-Data-3.0.0/Truman.ive");
         m_pMOsgScene->addNode(pModel);
         pModel->setScale(osg::Vec3(0.5, 0.5, 0.5));
         //pModel->setPos(MPos(4.0, 0.0, 0.0));
@@ -395,7 +396,6 @@ void MMainWindow::sample_cow()
         pLine->setLineWidth(2);
     }
 
-    m_pViewer->home();
 }
 
 void MMainWindow::slot_timeout()
@@ -406,10 +406,12 @@ void MMainWindow::slot_timeout()
 void MMainWindow::slot_test1(bool)
 {
     sample_cow();
+    m_pViewer->home();
 }
 
 void MMainWindow::slot_test2(bool)
 {
-
+    m_pMOsgScene->test("");
+    m_pViewer->home();
 }
 

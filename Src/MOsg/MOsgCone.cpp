@@ -27,12 +27,6 @@ MOsgCone::MOsgCone(QObject *parent) : MOsgNode(parent)
     osg::ref_ptr<osg::PolygonMode> polyMode=new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
     stateset->setAttribute(polyMode);
 
-    //使圆锥由默认的z轴方向旋转到(1.0,1.0,1.0)方向
-    osg::Quat quat;
-    //根据两个向量计算四元数
-    quat.makeRotate(osg::Z_AXIS,osg::Vec3(1.0,1.0,1.0));
-    cone->setRotation(quat);
-
     //加入到变换节点
     m_pTransform->addChild(geode.get());
 }

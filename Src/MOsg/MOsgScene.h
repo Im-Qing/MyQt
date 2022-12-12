@@ -16,8 +16,8 @@ public:
     explicit MOsgScene(QObject *parent = nullptr);
 public:
     void addNode(MOsgNode* node);
-private:
     void test(const QString& filePath);
+private:
     osg::ref_ptr<osg::Node> createQuad();
     osg::ref_ptr<osg::Node> createShape();
 private:
