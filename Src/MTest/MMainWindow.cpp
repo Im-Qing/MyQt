@@ -312,6 +312,46 @@ void MMainWindow::sample_cow()
 
         geode->addDrawable(geometry);
     }
+    //圆锥测试
+    if(false)
+    {
+        osg::Geode *geode = new osg::Geode();
+        m_pMOsgScene->addChild(geode);
+
+        //半径
+        float radius = 0.1f;
+        //高度
+        float height = 1.6f;
+
+        //精细度
+        osg::TessellationHints* hints1 = new osg::TessellationHints();
+        //设置精细度
+        hints1->setDetailRatio(0.8f);
+
+        //创建圆锥体
+        osg::Cone *cone = new osg::Cone(osg::Vec3(0.0f, 0.0f, 0.0f), radius, height);
+        osg::ShapeDrawable *draw1 = new osg::ShapeDrawable(cone, hints1);
+
+
+
+        //设置圆锥透明效果
+        osg::ref_ptr<osg::StateSet> stateset=geode->getOrCreateStateSet();
+        stateset->setMode(GL_BLEND,osg::StateAttribute::ON);
+        stateset->setRenderingHint(osg::StateSet::TRANSPARENT_BIN);
+        stateset->setMode(GL_LIGHTING, osg::StateAttribute::OFF);
+
+        //设置圆锥网格模型
+        osg::ref_ptr<osg::PolygonMode> polyMode=new osg::PolygonMode(osg::PolygonMode::FRONT_AND_BACK,osg::PolygonMode::LINE);
+        stateset->setAttribute(polyMode);
+
+        //设置圆锥的颜色，第四个参数0.25表示不透明度，0表示完全透明，1表示完全不透明
+        draw1->setColor(osg::Vec4(0.0,1.0,0.0,1.0));
+
+        geode->addDrawable(draw1);
+        m_pViewer->getCamera()->getGraphicsContext()->getState()->setUseVertexAttributeAliasing(false);
+        //m_pViewer->getCamera()->getGraphicsContext()->getState()->setUseVertexAttributeAliasing(true);
+
+    }
 
     //图片类测试
     if(false)
@@ -334,7 +374,7 @@ void MMainWindow::sample_cow()
         MOsgModel* pModel = new MOsgModel(1, this);
         pModel->setName(QString::fromLocal8Bit("小伙纸"));
         pModel->set2DImg("Data/OpenSceneGraph-Data-3.0.0/Images/osg64.png");
-        pModel->set3DModel("Data/OpenSceneGraph-Data-3.0.0/Truman.ive");
+        pModel->set3DModel("Data/OpenSceneGraph-Data-3.0.0/cow.osg");
         m_pMOsgScene->addNode(pModel);
         pModel->setScale(osg::Vec3(0.5, 0.5, 0.5));
         //pModel->setPos(MPos(4.0, 0.0, 0.0));
@@ -357,7 +397,7 @@ void MMainWindow::sample_cow()
         pLine->setLineWidth(2);
     }
     //锥体测试
-    //if(false)
+    if(false)
     {
         MOsgCone* pCone = new MOsgCone(this);
         pCone->setScale(osg::Vec3(2, 2, 2));

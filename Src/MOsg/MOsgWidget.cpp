@@ -37,8 +37,10 @@ MOsgWidget::MOsgWidget(MOsgScene* pScene, QWidget *parent) : QGraphicsView(paren
     m_pViewer->setSceneData(pScene);
     m_pViewer->realize();
 
-    m_pViewer->getCamera()->getGraphicsContext()->getState()->setUseModelViewAndProjectionUniforms(true);
-    m_pViewer->getCamera()->getGraphicsContext()->getState()->setUseVertexAttributeAliasing(true);
+//    m_pViewer->getCamera()->getGraphicsContext()->getState()->resetVertexAttributeAlias(false);
+//    m_pViewer->getCamera()->getGraphicsContext()->getState()->setUseModelViewAndProjectionUniforms(true);
+//    m_pViewer->getCamera()->getGraphicsContext()->getState()->setUseVertexAttributeAliasing(true);
+    qDebug()<<QString::fromStdString(m_pViewer->getCamera()->getGraphicsContext()->getTraits()->glContextVersion);
 
     startTimer(16);
 }
