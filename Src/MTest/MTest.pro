@@ -16,6 +16,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    easylogging++.cc \
     main.cpp \
     MMainWindow.cpp \
     SystemCapabilityCalculation.cpp \
@@ -24,7 +25,8 @@ SOURCES += \
 HEADERS += \
     MMainWindow.h \
     SystemCapabilityCalculation.h \
-    MModelTest.h
+    MModelTest.h \
+    easylogging++.h
 
 FORMS += \
     MMainWindow.ui
@@ -43,9 +45,9 @@ DEPENDPATH += \
 
 win32{
     LIBS += \
-        -L$$PWD/../../Lib/Win -lMOpenGLd -lMCored -lMWidgetd
+        -L$$PWD/../../Lib -lMOpenGLd -lMCored -lMWidgetd
 
-    DESTDIR = $$PWD/../../Bin/Win
+    DESTDIR = $$PWD/../../Bin
 }
 mac{
     CONFIG(debug,debug|release){

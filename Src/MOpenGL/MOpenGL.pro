@@ -50,9 +50,9 @@ win32{
     TargetDll = $$replace(TargetDll, /, \\)
     TargetLib = $$replace(TargetLib, /, \\)
     #将输出目录中的"/"替换为"\"
-    OutputBinDir = $$PWD/../../Bin/Win/
+    OutputBinDir = $$PWD/../../Bin/
     OutputBinDir = $$replace(OutputBinDir, /, \\)
-    OutputLibDir = $$PWD/../../Lib/Win/
+    OutputLibDir = $$PWD/../../Lib/
     OutputLibDir = $$replace(OutputLibDir, /, \\)
     //执行copy命令
     QMAKE_POST_LINK += copy /Y $$TargetDll $$OutputBinDir && copy /Y $$TargetLib $$OutputLibDir
